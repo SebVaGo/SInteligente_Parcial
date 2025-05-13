@@ -1,0 +1,1 @@
+# SInteligente_Parcial
