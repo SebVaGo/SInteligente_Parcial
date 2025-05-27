@@ -1,103 +1,133 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 import numpy as np
-
 import naivebayes
 import mochila
-import backprop_module as backprop  
+import backprop_module as backprop
 
-mochila.objetos = [
-    {"peso": 3, "valor": 25},
-    {"peso": 2, "valor": 20},
-    {"peso": 1, "valor": 15},
-    {"peso": 4, "valor": 40},
-    {"peso": 5, "valor": 50},
-]
-mochila.CAPACIDAD_MAXIMA = 6
+PRIMARY_BG   = "#2E3440"
+HOVER_BG     = "#434C5E"
+BUTTON_ACTIVE = "#81A1C1"
+TEXT_COLOR   = "#ECEFF4"
+CONTENT_BG   = "#ECEFF4"
+CARD_BORDER  = "#D8DEE9"
+
+class SidebarButton(ttk.Frame):
+    def __init__(self, parent, text, command):
+        super().__init__(parent, style="Sidebar.TFrame")
+        self.command = command
+        lbl = ttk.Label(self, text=text, style="Sidebar.TLabel", anchor="w")
+        lbl.pack(fill="x", expand=True, padx=10, pady=12)
+        lbl.bind("<Button-1>", lambda e: self.on_click())
+        lbl.bind("<Enter>", lambda e: self.configure(style="SidebarHover.TFrame"))
+        lbl.bind("<Leave>", lambda e: self.configure(style="Sidebar.TFrame"))
+    def on_click(self):
+        for sib in self.master.winfo_children():
+            sib.configure(style="Sidebar.TFrame")
+        self.configure(style="SidebarActive.TFrame")
+        self.command()
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Proyecto Software Inteligente")
-        self.geometry("900x700")
+        self.geometry("900x600")
+        self.configure(bg=PRIMARY_BG)
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("Sidebar.TFrame", background=PRIMARY_BG)
+        style.configure("SidebarHover.TFrame", background=HOVER_BG)
+        style.configure("SidebarActive.TFrame", background=BUTTON_ACTIVE)
+        style.configure("Sidebar.TLabel", background=PRIMARY_BG, foreground=TEXT_COLOR, font=("Segoe UI",11))
+        style.configure("Content.TFrame", background=CONTENT_BG)
+        style.configure("Card.TLabelframe", background=CONTENT_BG, bordercolor=CARD_BORDER, borderwidth=1, relief="solid")
+        style.configure("Card.TLabelframe.Label", background=CONTENT_BG, foreground="#2E3440", font=("Segoe UI",12,"bold"))
+        style.configure("TButton", font=("Segoe UI",11), padding=(8,4))
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        sidebar = ttk.Frame(self, style="Sidebar.TFrame", width=200)
+        sidebar.grid(row=0, column=0, sticky="ns")
+        SidebarButton(sidebar, "Diagnóstico Cáncer", self.show_nb).pack(fill="x")
+        SidebarButton(sidebar, "Problema Mochila", self.show_mochila).pack(fill="x")
+        SidebarButton(sidebar, "Backpropagation", self.show_backprop).pack(fill="x")
+        container = ttk.Frame(self, style="Content.TFrame")
+        container.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        self.frames = {}
+        for F in (NaiveBayesFrame, MochilaFrame, BackpropFrame):
+            f = F(container)
+            self.frames[F] = f
+            f.grid(row=0, column=0, sticky="nsew")
+        sidebar.winfo_children()[0].on_click()
+    def show_nb(self):
+        self.frames[NaiveBayesFrame].tkraise()
+    def show_mochila(self):
+        self.frames[MochilaFrame].tkraise()
+    def show_backprop(self):
+        self.frames[BackpropFrame].tkraise()
 
-        self.tab_control = ttk.Notebook(self)
-        
-        # 1) Diagnóstico Cáncer
-        self.tab_nb = ttk.Frame(self.tab_control)
-        self.tab_control.add(self.tab_nb, text='Diagnóstico Cáncer')
-        self.crear_interfaz_naivebayes()
-
-        # 2) Problema Mochila
-        self.tab_mochila = ttk.Frame(self.tab_control)
-        self.tab_control.add(self.tab_mochila, text='Problema Mochila')
-        self.crear_interfaz_mochila()
-
-        # 3) Backpropagation
-        self.tab_bp = ttk.Frame(self.tab_control)
-        self.tab_control.add(self.tab_bp, text='Backpropagation')
-        self.crear_interfaz_backprop()
-
-        self.tab_control.pack(expand=1, fill='both')
-
-    def crear_interfaz_naivebayes(self):
-        self.model, self.le, self.features, self.accuracy = naivebayes.entrenar_modelo()
-        ttk.Label(self.tab_nb, text=f"Precisión del modelo: {self.accuracy:.2f}", font=("Arial", 14)).pack(pady=10)
-
-        frame_sliders = ttk.Frame(self.tab_nb)
-        frame_sliders.pack(padx=10, pady=10, fill='x')
-
+class NaiveBayesFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, style="Content.TFrame")
+        model, le, features, acc = naivebayes.entrenar_modelo()
+        ttk.Label(self, text=f"Precisión: {acc:.2f}", font=("Segoe UI",14), background=CONTENT_BG).pack(pady=10)
+        card_attrs = ttk.Labelframe(self, text="Atributos", style="Card.TLabelframe", padding=10)
+        card_attrs.pack(fill="x", padx=20, pady=5)
         self.sliders = {}
-        features_to_use = self.features[:10]
-        for feat in features_to_use:
-            ttk.Label(frame_sliders, text=feat).pack(anchor='w')
-            s = ttk.Scale(frame_sliders, from_=0, to=100, orient='horizontal')
-            s.pack(fill='x', pady=2)
+        for feat in features[:10]:
+            ttk.Label(card_attrs, text=feat, background=CONTENT_BG).pack(anchor="w")
+            s = ttk.Scale(card_attrs, from_=0, to=100, orient="horizontal")
+            s.pack(fill="x", pady=2)
             self.sliders[feat] = s
+        ttk.Button(self, text="Predecir", command=self.predict).pack(pady=10)
+        card_res = ttk.Labelframe(self, text="Resultado", style="Card.TLabelframe", padding=10)
+        card_res.pack(fill="both", expand=True, padx=20, pady=5)
+        self.lbl_res = ttk.Label(card_res, text="", font=("Segoe UI",12), background=CONTENT_BG)
+        self.lbl_res.pack()
+        self._model = model; self._le = le; self._features = features
+    def predict(self):
+        data = [self.sliders[f].get() if f in self.sliders else 50 for f in self._features]
+        arr = np.array(data).reshape(1,-1)
+        pred = self._model.predict(arr)[0]
+        diag = self._le.inverse_transform([pred])[0]
+        self.lbl_res.config(text=diag)
 
-        ttk.Button(self.tab_nb, text="Predecir Diagnóstico", command=self.predecir_naivebayes).pack(pady=20)
-        self.result_nb = ttk.Label(self.tab_nb, text="", font=("Arial", 12))
-        self.result_nb.pack()
+class MochilaFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, style="Content.TFrame")
+        btn = ttk.Button(self, text="Ejecutar Genético", command=self.run)
+        btn.pack(pady=20)
+        card = ttk.Labelframe(self, text="Resultado Mochila", style="Card.TLabelframe", padding=10)
+        card.pack(fill="both", expand=True, padx=20, pady=5)
+        self.txt = tk.Text(card, bg="#FFFFFF", fg="#2E3440", bd=0, highlightthickness=0, font=("Consolas",11), padx=8, pady=8)
+        self.txt.pack(fill="both", expand=True)
+    def run(self):
+        sel,peso,valor,hist = mochila.ejecutar_genetico()
+        self.txt.config(state="normal"); self.txt.delete("1.0",tk.END)
+        self.txt.insert(tk.END, "Selección:\n")
+        for o in sel: self.txt.insert(tk.END, f"peso={o['peso']}, valor={o['valor']}\n")
+        self.txt.insert(tk.END, f"\nPeso total: {peso}\nValor total: {valor}\nHistorial: {hist}")
+        self.txt.config(state="disabled")
 
-    def predecir_naivebayes(self):
-        input_data = [
-            self.sliders[f].get() if f in self.sliders else 50
-            for f in self.features
-        ]
-        arr = np.array(input_data).reshape(1, -1)
-        pred = self.model.predict(arr)[0]
-        diag = self.le.inverse_transform([pred])[0]
-        self.result_nb.config(text=f"Diagnóstico predicho: {diag}")
-
-    def crear_interfaz_mochila(self):
-        ttk.Button(self.tab_mochila, text="Ejecutar Algoritmo Genético", command=self.ejecutar_mochila).pack(pady=10)
-        self.resultado_mochila = tk.Text(self.tab_mochila, height=20, width=80)
-        self.resultado_mochila.pack(pady=10)
-
-    def ejecutar_mochila(self):
-        seleccion, peso, valor, historia = mochila.ejecutar_genetico()
-        self.resultado_mochila.delete(1.0, tk.END)
-        self.resultado_mochila.insert(tk.END, "Objetos seleccionados:\n")
-        for obj in seleccion:
-            self.resultado_mochila.insert(tk.END, f"  • peso={obj['peso']}, valor={obj['valor']}\n")
-        self.resultado_mochila.insert(tk.END, f"\nPeso total: {peso}\n")
-        self.resultado_mochila.insert(tk.END, f"Valor total: {valor}\n")
-        self.resultado_mochila.insert(tk.END, "\nMejor valor por generación:\n")
-        self.resultado_mochila.insert(tk.END, ", ".join(str(v) for v in historia))
-
-    def crear_interfaz_backprop(self):
-        ttk.Label(self.tab_bp, text="Backpropagation para XOR", font=("Arial", 14)).pack(pady=10)
-        ttk.Button(self.tab_bp, text="Ejecutar Backpropagation", command=self.ejecutar_backprop).pack(pady=20)
-        self.result_bp = tk.Text(self.tab_bp, height=10, width=60)
-        self.result_bp.pack(pady=10)
-
-    def ejecutar_backprop(self):
-        output = backprop.ejecutar_backprop()
-        self.result_bp.delete(1.0, tk.END)
-        rounded = np.round(output, 3)
-        self.result_bp.insert(tk.END, "Salida final de la red (XOR):\n")
-        self.result_bp.insert(tk.END, f"{rounded}")
+class BackpropFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, style="Content.TFrame")
+        ttk.Label(self, text="Backpropagation XOR", font=("Segoe UI",16,"bold"), background=CONTENT_BG).pack(pady=10)
+        ttk.Button(self, text="Ejecutar", command=self.run).pack(pady=10)
+        card = ttk.Labelframe(self, text="Salida de la red", style="Card.TLabelframe", padding=10)
+        card.pack(fill="both", expand=True, padx=20, pady=5)
+        vsb = ttk.Scrollbar(card, orient="vertical")
+        vsb.pack(side="right", fill="y")
+        self.txt = tk.Text(card, height=8, wrap="none", yscrollcommand=vsb.set,
+                           bg="#FFFFFF", fg="#2E3440", bd=0, highlightthickness=0,
+                           font=("Consolas",11), padx=8, pady=8)
+        self.txt.pack(fill="both", expand=True)
+        vsb.config(command=self.txt.yview)
+    def run(self):
+        out = backprop.ejecutar_backprop()
+        rnd = np.round(out,3)
+        self.txt.config(state="normal"); self.txt.delete("1.0",tk.END)
+        self.txt.insert(tk.END, f"{rnd}")
+        self.txt.config(state="disabled")
 
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    App().mainloop()
