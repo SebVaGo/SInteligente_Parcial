@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
-import naivebayes
+import frame_naive_bayes as nb_frame
 import mochila
 import backprop_module as backprop
+
 
 PRIMARY_BG   = "#2E3440"
 HOVER_BG     = "#434C5E"
@@ -53,43 +54,19 @@ class App(tk.Tk):
         container = ttk.Frame(self, style="Content.TFrame")
         container.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
         self.frames = {}
-        for F in (NaiveBayesFrame, MochilaFrame, BackpropFrame):
+        for F in (nb_frame.NaiveBayesFrame, MochilaFrame, BackpropFrame):
             f = F(container)
             self.frames[F] = f
             f.grid(row=0, column=0, sticky="nsew")
         sidebar.winfo_children()[0].on_click()
     def show_nb(self):
-        self.frames[NaiveBayesFrame].tkraise()
+        self.frames[nb_frame.NaiveBayesFrame].tkraise()
     def show_mochila(self):
         self.frames[MochilaFrame].tkraise()
     def show_backprop(self):
         self.frames[BackpropFrame].tkraise()
 
-class NaiveBayesFrame(ttk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent, style="Content.TFrame")
-        model, le, features, acc = naivebayes.entrenar_modelo()
-        ttk.Label(self, text=f"Precisión: {acc:.2f}", font=("Segoe UI",14), background=CONTENT_BG).pack(pady=10)
-        card_attrs = ttk.Labelframe(self, text="Atributos", style="Card.TLabelframe", padding=10)
-        card_attrs.pack(fill="x", padx=20, pady=5)
-        self.sliders = {}
-        for feat in features[:10]:
-            ttk.Label(card_attrs, text=feat, background=CONTENT_BG).pack(anchor="w")
-            s = ttk.Scale(card_attrs, from_=0, to=100, orient="horizontal")
-            s.pack(fill="x", pady=2)
-            self.sliders[feat] = s
-        ttk.Button(self, text="Predecir", command=self.predict).pack(pady=10)
-        card_res = ttk.Labelframe(self, text="Resultado", style="Card.TLabelframe", padding=10)
-        card_res.pack(fill="both", expand=True, padx=20, pady=5)
-        self.lbl_res = ttk.Label(card_res, text="", font=("Segoe UI",12), background=CONTENT_BG)
-        self.lbl_res.pack()
-        self._model = model; self._le = le; self._features = features
-    def predict(self):
-        data = [self.sliders[f].get() if f in self.sliders else 50 for f in self._features]
-        arr = np.array(data).reshape(1,-1)
-        pred = self._model.predict(arr)[0]
-        diag = self._le.inverse_transform([pred])[0]
-        self.lbl_res.config(text=diag)
+
 
 class MochilaFrame(ttk.Frame):
     def __init__(self, parent):
