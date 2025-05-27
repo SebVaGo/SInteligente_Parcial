@@ -23,11 +23,9 @@ def entrenar_modelo():
 
     print("Forma después de imputar:", X_imputed_array.shape)
 
-    # Crear DataFrame sólo si columnas coinciden
     if X_imputed_array.shape[1] == X.shape[1]:
         X = pd.DataFrame(X_imputed_array, columns=X.columns)
     else:
-        # Si no coinciden, usar nombres genéricos
         X = pd.DataFrame(X_imputed_array)
 
     X_train, X_test, y_train, y_test = train_test_split(
