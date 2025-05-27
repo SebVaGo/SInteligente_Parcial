@@ -30,7 +30,10 @@ def seleccion_ruleta(poblacion, fitnesses):
             return ind
 
 def crossover(p1, p2):
-    punto = random.randint(1, len(p1)-1)
+    n = len(p1)
+    if n < 2:
+        return p1.copy()
+    punto = random.randint(1, n - 1)
     return p1[:punto] + p2[punto:]
 
 def mutar(individuo):
@@ -50,27 +53,33 @@ def obtener_valor_optimo():
 
 def ejecutar_genetico():
     poblacion = generar_poblacion()
-    mejor_global = (None, 0)
-    valor_optimo = obtener_valor_optimo()
-    historia = []
 
-    for gen in range(1, GENERACIONES_LIMITE + 1):
-        fitnesses = [calcular_fitness(ind) for ind in poblacion]
-        mejor = max(zip(poblacion, fitnesses), key=lambda x: x[1])
-        if mejor[1] > mejor_global[1]:
-            mejor_global = mejor
-        historia.append(mejor[1])
-        if mejor_global[1] == valor_optimo:
-            break
+    fitnesses = [calcular_fitness(ind) for ind in poblacion]
+    mejor_global = max(zip(poblacion, fitnesses), key=lambda x: x[1])
+
+    valor_optimo = obtener_valor_optimo()
+    historia = [mejor_global[1]]  
+    for gen in range(2, GENERACIONES_LIMITE + 1):
         nueva = []
         while len(nueva) < TAMANO_POBLACION:
             p1 = seleccion_ruleta(poblacion, fitnesses)
             p2 = seleccion_ruleta(poblacion, fitnesses)
-            h = mutar(crossover(p1, p2))
-            nueva.append(h)
+            hijo = mutar(crossover(p1, p2))
+            nueva.append(hijo)
+
         poblacion = nueva
+        fitnesses = [calcular_fitness(ind) for ind in poblacion]
+
+        mejor = max(zip(poblacion, fitnesses), key=lambda x: x[1])
+        if mejor[1] > mejor_global[1]:
+            mejor_global = mejor
+
+        historia.append(mejor_global[1])
+        if mejor_global[1] == valor_optimo:
+            break
 
     bits, val = mejor_global
     seleccion = [objetos[i] for i, b in enumerate(bits) if b]
     peso = sum(o["peso"] for o in seleccion)
     return seleccion, peso, val, historia
+
