@@ -1,7 +1,6 @@
 import random
 from itertools import product
 
-# Valores y pesos serán establecidos desde la interfaz
 objetos = []
 CAPACIDAD_MAXIMA = 0
 TAMANO_POBLACION = 30
@@ -53,7 +52,7 @@ def ejecutar_genetico():
     poblacion = generar_poblacion()
     mejor_global = (None, 0)
     valor_optimo = obtener_valor_optimo()
-    historia = []  
+    historia = []
 
     for gen in range(1, GENERACIONES_LIMITE + 1):
         fitnesses = [calcular_fitness(ind) for ind in poblacion]
