@@ -53,6 +53,9 @@ class App(tk.Tk):
         SidebarButton(sidebar, "Backpropagation", self.show_backprop).pack(fill="x")
         container = ttk.Frame(self, style="Content.TFrame")
         container.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        container.grid_columnconfigure(0, weight=1)
+        container.grid_rowconfigure(0, weight=1)
+        
         self.frames = {}
         for F in (nb_frame.NaiveBayesFrame, bp_frame.MochilaFrame, bpropagation_frame.BackpropFrame):
             f = F(container)
