@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
+import os
 import numpy as np
 import frame_naive_bayes as nb_frame
 import frame_backpack as bp_frame
 import frame_backpropagation as bpropagation_frame
+import frame_mobilenet as mobilenet_frame
 
-
+# Colores y estilos
 PRIMARY_BG   = "#2E3440"
 HOVER_BG     = "#434C5E"
 BUTTON_ACTIVE = "#81A1C1"
@@ -34,6 +36,8 @@ class App(tk.Tk):
         self.title("Proyecto Software Inteligente")
         self.geometry("900x600")
         self.configure(bg=PRIMARY_BG)
+
+        # Estilos
         style = ttk.Style(self)
         style.theme_use("clam")
         style.configure("Sidebar.TFrame", background=PRIMARY_BG)
@@ -42,33 +46,49 @@ class App(tk.Tk):
         style.configure("Sidebar.TLabel", background=PRIMARY_BG, foreground=TEXT_COLOR, font=("Segoe UI",11))
         style.configure("Content.TFrame", background=CONTENT_BG)
         style.configure("Card.TLabelframe", background=CONTENT_BG, bordercolor=CARD_BORDER, borderwidth=1, relief="solid")
-        style.configure("Card.TLabelframe.Label", background=CONTENT_BG, foreground="#2E3440", font=("Segoe UI",12,"bold"))
+        style.configure("Card.TLabelframe.Label", background=CONTENT_BG, foreground=PRIMARY_BG, font=("Segoe UI",12,"bold"))
         style.configure("TButton", font=("Segoe UI",11), padding=(8,4))
+
+        # Layout
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
+
+        # Barra lateral
         sidebar = ttk.Frame(self, style="Sidebar.TFrame", width=200)
         sidebar.grid(row=0, column=0, sticky="ns")
-        SidebarButton(sidebar, "Diagnóstico Cáncer", self.show_nb).pack(fill="x")
-        SidebarButton(sidebar, "Problema Mochila", self.show_mochila).pack(fill="x")
-        SidebarButton(sidebar, "Backpropagation", self.show_backprop).pack(fill="x")
+
+        # Contenedor de contenido
         container = ttk.Frame(self, style="Content.TFrame")
         container.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
         container.grid_columnconfigure(0, weight=1)
         container.grid_rowconfigure(0, weight=1)
-        
+
+        # Instanciar frames
         self.frames = {}
-        for F in (nb_frame.NaiveBayesFrame, bp_frame.MochilaFrame, bpropagation_frame.BackpropFrame):
-            f = F(container)
-            self.frames[F] = f
-            f.grid(row=0, column=0, sticky="nsew")
+        for FrameClass, label, show_cmd in [
+            (nb_frame.NaiveBayesFrame, "Diagnóstico Cáncer", self.show_nb),
+            (bp_frame.MochilaFrame, "Problema Mochila", self.show_mochila),
+            (bpropagation_frame.BackpropFrame, "Backpropagation", self.show_backprop),
+            (mobilenet_frame.MobilenetFrame, "Transfer Learning MobileNetV2", self.show_mobilenet)
+        ]:
+            frame = FrameClass(container, self) if FrameClass is mobilenet_frame.MobilenetFrame else FrameClass(container)
+            self.frames[FrameClass] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
+            # Botón en sidebar
+            SidebarButton(sidebar, label, show_cmd).pack(fill="x")
+
+        # Mostrar frame inicial
         sidebar.winfo_children()[0].on_click()
+
+    # Métodos para mostrar frames
     def show_nb(self):
         self.frames[nb_frame.NaiveBayesFrame].tkraise()
     def show_mochila(self):
         self.frames[bp_frame.MochilaFrame].tkraise()
     def show_backprop(self):
         self.frames[bpropagation_frame.BackpropFrame].tkraise()
-
+    def show_mobilenet(self):
+        self.frames[mobilenet_frame.MobilenetFrame].tkraise()
 
 if __name__ == "__main__":
     App().mainloop()
