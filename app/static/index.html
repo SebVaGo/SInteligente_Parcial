@@ -54,10 +54,25 @@
                     <label class="form-label">Capacidad</label>
                     <input type="number" step="0.1" class="form-control" id="mo_cap" value="6">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Objetos (peso,valor por línea)</label>
-                    <textarea class="form-control" id="mo_objs" rows="4">2,3\n1,1\n3,4</textarea>
+                <div class="row g-2 align-items-end">
+                    <div class="col">
+                        <label class="form-label">Peso</label>
+                        <input type="number" step="0.1" class="form-control" id="mo_peso">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Valor</label>
+                        <input type="number" step="0.1" class="form-control" id="mo_valor">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="mo_add" class="btn btn-secondary">Agregar</button>
+                    </div>
                 </div>
+                <table class="table table-sm mt-3" id="mo_table">
+                    <thead>
+                        <tr><th>#</th><th>Peso</th><th>Valor</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <button type="submit" class="btn btn-primary">Ejecutar</button>
             </form>
             <pre id="mo_res"></pre>
@@ -140,12 +155,47 @@ document.getElementById('form-nb').addEventListener('submit', async e => {
 });
 
 // Mochila
+const moObjs = [
+    {peso:2, valor:3},
+    {peso:1, valor:1},
+    {peso:3, valor:4}
+];
+function refreshMoTable() {
+    const tbody = document.querySelector('#mo_table tbody');
+    tbody.innerHTML = '';
+    moObjs.forEach((o, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${o.peso}</td><td>${o.valor}</td>` +
+                       `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
+        tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+        moObjs.splice(btn.dataset.idx, 1);
+        refreshMoTable();
+    }));
+}
+refreshMoTable();
+document.getElementById('mo_add').addEventListener('click', () => {
+    const peso = parseFloat(document.getElementById('mo_peso').value);
+    const valor = parseFloat(document.getElementById('mo_valor').value);
+    if (!isNaN(peso) && !isNaN(valor)) {
+        moObjs.push({peso, valor});
+        document.getElementById('mo_peso').value = '';
+        document.getElementById('mo_valor').value = '';
+        refreshMoTable();
+    }
+});
 document.getElementById('form-mochila').addEventListener('submit', async e => {
     e.preventDefault();
-    const lines = document.getElementById('mo_objs').value.trim().split('\n');
-    const objs = lines.filter(Boolean).map(l => {const [p,v]=l.split(',').map(Number);return {peso:p, valor:v};});
-    const body = {capacidad: parseFloat(document.getElementById('mo_cap').value), objetos: objs};
-    const r = await fetch('/api/mochila', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const body = {
+        capacidad: parseFloat(document.getElementById('mo_cap').value),
+        objetos: moObjs
+    };
+    const r = await fetch('/api/mochila', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+    });
     document.getElementById('mo_res').textContent = JSON.stringify(await r.json(), null, 2);
 });
 
