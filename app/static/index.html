@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Algoritmos Inteligentes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { min-height: 100vh; }
+        #sidebar { width: 200px; }
+        .content-section { display: none; }
+    </style>
+</head>
+<body class="d-flex">
+    <nav id="sidebar" class="bg-dark text-white p-3 flex-shrink-0">
+        <h4>Algoritmos</h4>
+        <ul class="nav nav-pills flex-column" id="menu">
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="nb">Naive Bayes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mochila">Mochila</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="backprop">Backprop</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mobilenet">MobileNetV2</a></li>
+        </ul>
+    </nav>
+    <div class="flex-grow-1 p-4">
+        <section id="nb" class="content-section">
+            <h3>Naive Bayes (Dígitos)</h3>
+            <form id="form-nb" class="row g-3">
+                <div class="col-6">
+                    <label class="form-label">Imagen</label>
+                    <input type="file" class="form-control" id="nb_img" accept=".png,.jpg,.jpeg">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Clasificar</button>
+                </div>
+            </form>
+            <div id="nb_res"></div>
+        </section>
+
+        <section id="mochila" class="content-section">
+            <h3>Algoritmo Genético - Mochila</h3>
+            <form id="form-mochila" class="mb-3">
+                <div class="mb-3">
+                    <label class="form-label">Capacidad</label>
+                    <input type="number" step="0.1" class="form-control" id="mo_cap" value="6">
+                </div>
+                <div class="row g-2 align-items-end">
+                    <div class="col-4">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="mo_nombre">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Peso</label>
+                        <input type="number" step="0.1" class="form-control" id="mo_peso">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Valor</label>
+                        <input type="number" step="0.1" class="form-control" id="mo_valor">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="mo_add" class="btn btn-secondary">Agregar</button>
+                    </div>
+                </div>
+                <table class="table table-sm mt-3" id="mo_table">
+                    <thead>
+                        <tr><th>#</th><th>Nombre</th><th>Peso</th><th>Valor</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Ejecutar</button>
+            </form>
+            <pre id="mo_res"></pre>
+        </section>
+
+        <section id="backprop" class="content-section">
+            <h3>Backpropagation</h3>
+            <form id="form-bp" class="mb-3">
+                <div class="row g-2 align-items-end">
+                    <div class="col">
+                        <label class="form-label">Entradas</label>
+                        <input type="text" class="form-control" id="bp_inputs">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Salidas</label>
+                        <input type="text" class="form-control" id="bp_outputs">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-secondary" id="bp_add">Agregar</button>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label">o Cargar CSV</label>
+                    <input type="file" class="form-control" id="bp_csv" accept=".csv">
+                </div>
+                <table class="table table-sm mt-3" id="bp_table">
+                    <thead>
+                        <tr><th>#</th><th>Entradas</th><th>Salidas</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Ejecutar</button>
+            </form>
+            <div id="bp_res"></div>
+        </section>
+
+        <section id="mobilenet" class="content-section">
+            <h3>Transfer Learning MobileNetV2</h3>
+            <form id="form-mn" class="row g-3">
+                <div class="col-6">
+                    <label class="form-label">Imagen</label>
+                    <input type="file" class="form-control" id="mn_img" accept=".png,.jpg,.jpeg">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Clasificar</button>
+                </div>
+            </form>
+            <div id="mn_res"></div>
+        </section>
+    </div>
+
+<script>
+const sections = document.querySelectorAll('.content-section');
+const menuLinks = document.querySelectorAll('#menu .nav-link');
+menuLinks.forEach(l => l.addEventListener('click', e => {
+    e.preventDefault();
+    sections.forEach(s => s.style.display = 'none');
+    document.getElementById(l.dataset.target).style.display = 'block';
+}));
+// Show first section
+if (sections.length) sections[0].style.display = 'block';
+
+// Naive Bayes imagen
+document.getElementById('form-nb').addEventListener('submit', async e => {
+    e.preventDefault();
+    const inp = document.getElementById('nb_img');
+    if(!inp.files.length) return;
+    const fd = new FormData();
+    fd.append('file', inp.files[0]);
+    const r = await fetch('/api/naive_bayes/image', {method:'POST', body:fd});
+    const res = await r.json();
+    document.getElementById('nb_res').innerHTML = `<p><strong>Predicción:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+});
+
+// Mochila
+const moObjs = [
+    {nombre:'A', peso:2, valor:3},
+    {nombre:'B', peso:1, valor:1},
+    {nombre:'C', peso:3, valor:4}
+];
+function refreshMoTable() {
+    const tbody = document.querySelector('#mo_table tbody');
+    tbody.innerHTML = '';
+    moObjs.forEach((o, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${o.nombre}</td><td>${o.peso}</td><td>${o.valor}</td>` +
+                       `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
+        tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+        moObjs.splice(btn.dataset.idx, 1);
+        refreshMoTable();
+    }));
+}
+refreshMoTable();
+document.getElementById('mo_add').addEventListener('click', () => {
+    const nombre = document.getElementById('mo_nombre').value.trim();
+    const peso = parseFloat(document.getElementById('mo_peso').value);
+    const valor = parseFloat(document.getElementById('mo_valor').value);
+    if (nombre && !isNaN(peso) && !isNaN(valor)) {
+        moObjs.push({nombre, peso, valor});
+        document.getElementById('mo_nombre').value = '';
+        document.getElementById('mo_peso').value = '';
+        document.getElementById('mo_valor').value = '';
+        refreshMoTable();
+    }
+});
+document.getElementById('form-mochila').addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = {
+        capacidad: parseFloat(document.getElementById('mo_cap').value),
+        objetos: moObjs
+    };
+    const r = await fetch('/api/mochila', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+    });
+    const res = await r.json();
+    let html = `<p><strong>Valor máximo:</strong> ${res.valor}</p>`;
+    html += `<p><strong>Peso usado:</strong> ${res.peso} / ${body.capacidad}</p>`;
+    html += '<p><strong>Elementos seleccionados:</strong></p><ul>';
+    res.seleccion.forEach(o => {
+        html += `<li>${o.nombre} (peso ${o.peso}, valor ${o.valor})</li>`;
+    });
+    html += '</ul>';
+    document.getElementById('mo_res').innerHTML = html;
+});
+
+// Backprop
+const bpData = [
+    {inputs:[0,0], outputs:[0]},
+    {inputs:[0,1], outputs:[1]},
+    {inputs:[1,0], outputs:[1]},
+    {inputs:[1,1], outputs:[0]}
+];
+function refreshBpTable(){
+    const tbody = document.querySelector('#bp_table tbody');
+    tbody.innerHTML = '';
+    bpData.forEach((d,i)=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${d.inputs.join(',')}</td><td>${d.outputs.join(',')}</td>`+
+                       `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
+        tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{
+        bpData.splice(btn.dataset.idx,1); refreshBpTable();
+    }));
+}
+refreshBpTable();
+document.getElementById('bp_add').addEventListener('click',()=>{
+    const ins = document.getElementById('bp_inputs').value.trim();
+    const outs = document.getElementById('bp_outputs').value.trim();
+    if(!ins || !outs) return;
+    const inArr = ins.split(',').map(Number);
+    const outArr = outs.split(',').map(Number);
+    if(inArr.some(isNaN) || outArr.some(isNaN)) return;
+    bpData.push({inputs:inArr, outputs:outArr});
+    document.getElementById('bp_inputs').value='';
+    document.getElementById('bp_outputs').value='';
+    refreshBpTable();
+});
+document.getElementById('bp_csv').addEventListener('change',e=>{
+    const file=e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+        const lines=reader.result.trim().split(/\r?\n/);
+        lines.forEach(l=>{
+            const vals=l.split(',').map(Number);
+            if(vals.some(isNaN) || vals.length<2) return;
+            bpData.push({inputs:vals.slice(0,-1), outputs:[vals[vals.length-1]]});
+        });
+        refreshBpTable();
+    };
+    reader.readAsText(file);
+});
+document.getElementById('form-bp').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const body={
+        inputs:bpData.map(d=>d.inputs),
+        outputs:bpData.map(d=>d.outputs)
+    };
+    const r= await fetch('/api/backprop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const res=await r.json();
+    let html='<table class="table table-sm"><thead><tr><th>Entrada</th><th>Salida</th></tr></thead><tbody>';
+    res.result.forEach((o,i)=>{
+        html+=`<tr><td>${bpData[i].inputs.join(',')}</td><td>${o.map(v=>v.toFixed(3)).join(',')}</td></tr>`;
+    });
+    html+='</tbody></table>';
+    document.getElementById('bp_res').innerHTML=html;
+});
+
+// MobileNet
+document.getElementById('form-mn').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fileInput = document.getElementById('mn_img');
+    if(!fileInput.files.length) return;
+    const fd = new FormData();
+    fd.append('file', fileInput.files[0]);
+    const r = await fetch('/api/mobilenet', {method:'POST', body:fd});
+    const res = await r.json();
+    document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+});
+</script>
+</body>
+</html>
