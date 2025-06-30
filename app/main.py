@@ -88,9 +88,6 @@ def ejecutar_mochila(req: MochilaRequest):
 class BackpropRequest(BaseModel):
     inputs: List[List[float]]
     outputs: List[List[float]]
-    epochs: int = 10000
-    lr: float = 0.1
-    hidden: int = 2
 
 class BackpropResponse(BaseModel):
     result: List[List[float]]
@@ -102,11 +99,11 @@ def ejecutar_backprop(req: BackpropRequest):
     out = backprop.ejecutar_backprop(
         inputs=X,
         expected_output=Y,
-        epochs=req.epochs,
-        lr=req.lr,
-        hidden_neurons=req.hidden,
+        epochs=10000,
+        lr=0.1,
+        hidden_neurons=2,
     )
-    return BackpropResponse(result=out.tolist())
+    return BackpropResponse(result=np.round(out, 4).tolist())
 
 # ---- MobileNetV2 ----
 class MobileNetRequest(BaseModel):
