@@ -1,7 +1,10 @@
 import zipfile
 import os
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
+from tensorflow.keras.preprocessing import image
 from tensorflow.keras import layers, models, optimizers
 
 def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate):
@@ -77,3 +80,25 @@ def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate):
     eval_metrics = {'loss': eval_loss, 'accuracy': eval_acc}
 
     return history, eval_metrics
+
+
+_clf_model = None
+
+
+def _load_model():
+    global _clf_model
+    if _clf_model is None:
+        _clf_model = MobileNetV2(weights="imagenet")
+    return _clf_model
+
+
+def clasificar_imagen(img_path):
+    """Clasifica una imagen usando MobileNetV2 preentrenada en ImageNet."""
+    model = _load_model()
+    img = image.load_img(img_path, target_size=(224, 224))
+    arr = image.img_to_array(img)
+    arr = np.expand_dims(arr, axis=0)
+    arr = preprocess_input(arr)
+    preds = model.predict(arr)
+    label, prob = decode_predictions(preds, top=1)[0][0][1:]
+    return label, float(prob)
