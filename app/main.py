@@ -7,6 +7,7 @@ import numpy as np
 import os
 import tempfile
 
+
 import naivebayes
 import mochila
 import backprop_module as backprop
@@ -128,6 +129,7 @@ def ejecutar_backprop(req: BackpropRequest):
     return BackpropResponse(result=np.round(out, 4).tolist())
 
 # ---- MobileNetV2 ----
+
 class MobileNetResponse(BaseModel):
     label: str
     probability: float
