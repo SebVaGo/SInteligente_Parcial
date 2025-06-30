@@ -55,6 +55,10 @@
                     <input type="number" step="0.1" class="form-control" id="mo_cap" value="6">
                 </div>
                 <div class="row g-2 align-items-end">
+                    <div class="col-4">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="mo_nombre">
+                    </div>
                     <div class="col">
                         <label class="form-label">Peso</label>
                         <input type="number" step="0.1" class="form-control" id="mo_peso">
@@ -69,7 +73,7 @@
                 </div>
                 <table class="table table-sm mt-3" id="mo_table">
                     <thead>
-                        <tr><th>#</th><th>Peso</th><th>Valor</th><th></th></tr>
+                        <tr><th>#</th><th>Nombre</th><th>Peso</th><th>Valor</th><th></th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -156,16 +160,16 @@ document.getElementById('form-nb').addEventListener('submit', async e => {
 
 // Mochila
 const moObjs = [
-    {peso:2, valor:3},
-    {peso:1, valor:1},
-    {peso:3, valor:4}
+    {nombre:'A', peso:2, valor:3},
+    {nombre:'B', peso:1, valor:1},
+    {nombre:'C', peso:3, valor:4}
 ];
 function refreshMoTable() {
     const tbody = document.querySelector('#mo_table tbody');
     tbody.innerHTML = '';
     moObjs.forEach((o, i) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${i+1}</td><td>${o.peso}</td><td>${o.valor}</td>` +
+        tr.innerHTML = `<td>${i+1}</td><td>${o.nombre}</td><td>${o.peso}</td><td>${o.valor}</td>` +
                        `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
         tbody.appendChild(tr);
     });
@@ -176,10 +180,12 @@ function refreshMoTable() {
 }
 refreshMoTable();
 document.getElementById('mo_add').addEventListener('click', () => {
+    const nombre = document.getElementById('mo_nombre').value.trim();
     const peso = parseFloat(document.getElementById('mo_peso').value);
     const valor = parseFloat(document.getElementById('mo_valor').value);
-    if (!isNaN(peso) && !isNaN(valor)) {
-        moObjs.push({peso, valor});
+    if (nombre && !isNaN(peso) && !isNaN(valor)) {
+        moObjs.push({nombre, peso, valor});
+        document.getElementById('mo_nombre').value = '';
         document.getElementById('mo_peso').value = '';
         document.getElementById('mo_valor').value = '';
         refreshMoTable();
@@ -196,7 +202,15 @@ document.getElementById('form-mochila').addEventListener('submit', async e => {
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(body)
     });
-    document.getElementById('mo_res').textContent = JSON.stringify(await r.json(), null, 2);
+    const res = await r.json();
+    let html = `<p><strong>Valor máximo:</strong> ${res.valor}</p>`;
+    html += `<p><strong>Peso usado:</strong> ${res.peso} / ${body.capacidad}</p>`;
+    html += '<p><strong>Elementos seleccionados:</strong></p><ul>';
+    res.seleccion.forEach(o => {
+        html += `<li>${o.nombre} (peso ${o.peso}, valor ${o.valor})</li>`;
+    });
+    html += '</ul>';
+    document.getElementById('mo_res').innerHTML = html;
 });
 
 // Backprop

@@ -63,6 +63,7 @@ def predict_nb(req: NBPredictRequest):
 
 # ---- Mochila ----
 class Objeto(BaseModel):
+    nombre: str
     peso: float
     valor: float
 
