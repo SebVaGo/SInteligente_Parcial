@@ -3,6 +3,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
+from sklearn.datasets import load_digits
+from PIL import Image
 
 def entrenar_modelo(
     url: str = 'https://github.com/YBIFoundation/Dataset/raw/main/Cancer.csv',
@@ -55,3 +57,34 @@ def entrenar_modelo(
     logs.append(f"Precisión sobre test: {accuracy:.4f}")
 
     return model, le, X.columns.tolist(), accuracy, logs
+
+
+# --- Clasificación de imágenes ----
+_digits_model = None
+
+
+def _load_digits_model():
+    """Entrena un clasificador de dígitos con GaussianNB si no existe."""
+    global _digits_model
+    if _digits_model is None:
+        digits = load_digits()
+        X_train, X_test, y_train, y_test = train_test_split(
+            digits.data, digits.target, test_size=0.2, random_state=42
+        )
+        model = GaussianNB()
+        model.fit(X_train, y_train)
+        _digits_model = model
+    return _digits_model
+
+
+def clasificar_imagen(path):
+    """Clasifica una imagen de un dígito (png/jpg)."""
+    model = _load_digits_model()
+    img = Image.open(path).convert("L").resize((8, 8))
+    arr = np.array(img, dtype=float)
+    arr = 16 * arr / 255.0
+    arr = arr.reshape(1, -1)
+    probs = model.predict_proba(arr)[0]
+    label = int(probs.argmax())
+    prob = float(probs.max())
+    return label, prob

@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
-
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -44,6 +43,10 @@ class NBPredictRequest(BaseModel):
 class NBPredictResponse(BaseModel):
     diagnosis: str
 
+class NBImageResponse(BaseModel):
+    label: int
+    probability: float
+
 nb_state = {"model": None, "le": None, "features": None}
 
 @app.post("/api/naive_bayes/train", response_model=NBTrainResponse)
@@ -64,6 +67,22 @@ def predict_nb(req: NBPredictRequest):
     pred = nb_state["model"].predict(arr)[0]
     diag = nb_state["le"].inverse_transform([pred])[0]
     return NBPredictResponse(diagnosis=diag)
+
+
+@app.post("/api/naive_bayes/image", response_model=NBImageResponse)
+async def nb_from_image(file: UploadFile = File(...)):
+    if file.content_type not in ("image/png", "image/jpeg"):
+        raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
+    data = await file.read()
+    suffix = os.path.splitext(file.filename)[1] or ".png"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(data)
+        tmp_path = tmp.name
+    try:
+        label, prob = naivebayes.clasificar_imagen(tmp_path)
+    finally:
+        os.remove(tmp_path)
+    return NBImageResponse(label=label, probability=prob)
 
 # ---- Mochila ----
 class Objeto(BaseModel):
@@ -132,4 +151,3 @@ async def ejecutar_mobilenet_api(file: UploadFile = File(...)):
     finally:
         os.remove(tmp_path)
     return MobileNetResponse(label=label, probability=prob)
-
