@@ -1,9 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
+
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List
 import numpy as np
+import os
+import tempfile
+
 
 import naivebayes
 import mochila
@@ -106,24 +110,26 @@ def ejecutar_backprop(req: BackpropRequest):
     return BackpropResponse(result=np.round(out, 4).tolist())
 
 # ---- MobileNetV2 ----
-class MobileNetRequest(BaseModel):
-    zip_path: str
-    epochs: int = 10
-    batch_size: int = 32
-    learning_rate: float = 0.001
 
 class MobileNetResponse(BaseModel):
-    loss: float
-    accuracy: float
+    label: str
+    probability: float
+
 
 @app.post("/api/mobilenet", response_model=MobileNetResponse)
-def ejecutar_mobilenet_api(req: MobileNetRequest):
+async def ejecutar_mobilenet_api(file: UploadFile = File(...)):
     if mobilenet is None:
         raise HTTPException(status_code=500, detail="TensorFlow no disponible")
-    _, metrics = mobilenet.ejecutar_mobilenet(
-        req.zip_path,
-        req.epochs,
-        req.batch_size,
-        req.learning_rate,
-    )
-    return MobileNetResponse(loss=metrics["loss"], accuracy=metrics["accuracy"])
+    if file.content_type not in ("image/png", "image/jpeg"):
+        raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
+    data = await file.read()
+    suffix = os.path.splitext(file.filename)[1] or ".png"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(data)
+        tmp_path = tmp.name
+    try:
+        label, prob = mobilenet.clasificar_imagen(tmp_path)
+    finally:
+        os.remove(tmp_path)
+    return MobileNetResponse(label=label, probability=prob)
+
