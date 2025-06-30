@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Algoritmos Inteligentes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { min-height: 100vh; }
+        #sidebar { width: 200px; }
+        .content-section { display: none; }
+    </style>
+</head>
+<body class="d-flex">
+    <nav id="sidebar" class="bg-dark text-white p-3 flex-shrink-0">
+        <h4>Algoritmos</h4>
+        <ul class="nav nav-pills flex-column" id="menu">
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="nb">Naive Bayes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mochila">Mochila</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="backprop">Backprop</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mobilenet">MobileNetV2</a></li>
+        </ul>
+    </nav>
+    <div class="flex-grow-1 p-4">
+        <section id="nb" class="content-section">
+            <h3>Naive Bayes</h3>
+            <form id="form-nb" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Test size</label>
+                    <input type="number" step="0.05" class="form-control" id="nb_test" value="0.2">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Random state</label>
+                    <input type="number" class="form-control" id="nb_rs" value="22">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Imputer</label>
+                    <select class="form-select" id="nb_imp">
+                        <option value="mean" selected>mean</option>
+                        <option value="median">median</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Ejecutar</button>
+                </div>
+            </form>
+            <pre class="mt-3" id="nb_res"></pre>
+        </section>
+
+        <section id="mochila" class="content-section">
+            <h3>Algoritmo Genético - Mochila</h3>
+            <form id="form-mochila" class="mb-3">
+                <div class="mb-3">
+                    <label class="form-label">Capacidad</label>
+                    <input type="number" step="0.1" class="form-control" id="mo_cap" value="6">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Objetos (peso,valor por línea)</label>
+                    <textarea class="form-control" id="mo_objs" rows="4">2,3\n1,1\n3,4</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Ejecutar</button>
+            </form>
+            <pre id="mo_res"></pre>
+        </section>
+
+        <section id="backprop" class="content-section">
+            <h3>Backpropagation</h3>
+            <form id="form-bp" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Épocas</label>
+                    <input type="number" class="form-control" id="bp_epochs" value="10000">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">LR</label>
+                    <input type="number" step="0.01" class="form-control" id="bp_lr" value="0.1">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Ocultas</label>
+                    <input type="number" class="form-control" id="bp_hidden" value="2">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Datos (x1,x2->y)</label>
+                    <textarea class="form-control" id="bp_data" rows="4">0,0->0\n0,1->1\n1,0->1\n1,1->0</textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Ejecutar</button>
+                </div>
+            </form>
+            <pre id="bp_res"></pre>
+        </section>
+
+        <section id="mobilenet" class="content-section">
+            <h3>Transfer Learning MobileNetV2</h3>
+            <form id="form-mn" class="row g-3">
+                <div class="col-6">
+                    <label class="form-label">Ruta ZIP</label>
+                    <input type="text" class="form-control" id="mn_path">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Épocas</label>
+                    <input type="number" class="form-control" id="mn_epochs" value="10">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Batch</label>
+                    <input type="number" class="form-control" id="mn_batch" value="32">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">LR</label>
+                    <input type="number" step="0.0001" class="form-control" id="mn_lr" value="0.001">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Ejecutar</button>
+                </div>
+            </form>
+            <pre id="mn_res"></pre>
+        </section>
+    </div>
+
+<script>
+const sections = document.querySelectorAll('.content-section');
+const menuLinks = document.querySelectorAll('#menu .nav-link');
+menuLinks.forEach(l => l.addEventListener('click', e => {
+    e.preventDefault();
+    sections.forEach(s => s.style.display = 'none');
+    document.getElementById(l.dataset.target).style.display = 'block';
+}));
+// Show first section
+if (sections.length) sections[0].style.display = 'block';
+
+// Naive Bayes
+document.getElementById('form-nb').addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = {
+        test_size: parseFloat(document.getElementById('nb_test').value),
+        random_state: parseInt(document.getElementById('nb_rs').value),
+        imputer_strategy: document.getElementById('nb_imp').value
+    };
+    const r = await fetch('/api/naive_bayes/train', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    document.getElementById('nb_res').textContent = JSON.stringify(await r.json(), null, 2);
+});
+
+// Mochila
+document.getElementById('form-mochila').addEventListener('submit', async e => {
+    e.preventDefault();
+    const lines = document.getElementById('mo_objs').value.trim().split('\n');
+    const objs = lines.filter(Boolean).map(l => {const [p,v]=l.split(',').map(Number);return {peso:p, valor:v};});
+    const body = {capacidad: parseFloat(document.getElementById('mo_cap').value), objetos: objs};
+    const r = await fetch('/api/mochila', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    document.getElementById('mo_res').textContent = JSON.stringify(await r.json(), null, 2);
+});
+
+// Backprop
+document.getElementById('form-bp').addEventListener('submit', async e => {
+    e.preventDefault();
+    const dataLines = document.getElementById('bp_data').value.trim().split('\n');
+    const X=[],Y=[];
+    dataLines.forEach(l => {
+        if(!l.includes('->')) return;
+        const [xpart, ypart] = l.split('->');
+        X.push(xpart.split(',').map(Number));
+        Y.push(ypart.split(',').map(Number));
+    });
+    const body={
+        inputs:X,
+        outputs:Y,
+        epochs: parseInt(document.getElementById('bp_epochs').value),
+        lr: parseFloat(document.getElementById('bp_lr').value),
+        hidden: parseInt(document.getElementById('bp_hidden').value)
+    };
+    const r = await fetch('/api/backprop', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    document.getElementById('bp_res').textContent = JSON.stringify(await r.json(), null, 2);
+});
+
+// MobileNet
+document.getElementById('form-mn').addEventListener('submit', async e => {
+    e.preventDefault();
+    const body={
+        zip_path: document.getElementById('mn_path').value,
+        epochs: parseInt(document.getElementById('mn_epochs').value),
+        batch_size: parseInt(document.getElementById('mn_batch').value),
+        learning_rate: parseFloat(document.getElementById('mn_lr').value)
+    };
+    const r = await fetch('/api/mobilenet', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    document.getElementById('mn_res').textContent = JSON.stringify(await r.json(), null, 2);
+});
+</script>
+</body>
+</html>
