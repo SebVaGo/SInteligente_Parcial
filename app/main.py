@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
+
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ from typing import List
 import numpy as np
 import os
 import tempfile
+
 
 import naivebayes
 import mochila
@@ -108,6 +110,7 @@ def ejecutar_backprop(req: BackpropRequest):
     return BackpropResponse(result=np.round(out, 4).tolist())
 
 # ---- MobileNetV2 ----
+
 class MobileNetResponse(BaseModel):
     label: str
     probability: float
@@ -129,3 +132,4 @@ async def ejecutar_mobilenet_api(file: UploadFile = File(...)):
     finally:
         os.remove(tmp_path)
     return MobileNetResponse(label=label, probability=prob)
+

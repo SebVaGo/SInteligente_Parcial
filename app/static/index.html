@@ -125,6 +125,7 @@
                 </div>
             </form>
             <div id="mn_res"></div>
+
         </section>
     </div>
 
@@ -280,6 +281,7 @@ document.getElementById('form-mn').addEventListener('submit', async e => {
     const r = await fetch('/api/mobilenet', {method:'POST', body:fd});
     const res = await r.json();
     document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+
 });
 </script>
 </body>
