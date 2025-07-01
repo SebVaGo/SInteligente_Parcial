@@ -205,7 +205,7 @@ async def ejecutar_mobilenet_api(file: UploadFile = File(...)):
         tmp.write(data)
         tmp_path = tmp.name
     try:
-        label, prob = mobilenet.clasificar_imagen(tmp_path)
+        label, prob = mobilenet.predecir_emocion(tmp_path)
     finally:
         os.remove(tmp_path)
     return MobileNetResponse(label=label, probability=prob)

@@ -3,11 +3,11 @@ import os
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras import layers, models, optimizers
 
-def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate):
+def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate, *, save_path=None):
     """
     Descomprime el ZIP de imágenes y entrena un modelo de transferencia usando MobileNetV2.
 
@@ -79,26 +79,44 @@ def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate):
     eval_loss, eval_acc = model.evaluate(val_ds)
     eval_metrics = {'loss': eval_loss, 'accuracy': eval_acc}
 
+    if save_path:
+        model.save(save_path)
+
     return history, eval_metrics
 
 
-_clf_model = None
+_emotion_model = None
+_emotion_labels = [
+    "angry",
+    "disgust",
+    "fear",
+    "happy",
+    "neutral",
+    "sad",
+    "surprise",
+]
 
 
-def _load_model():
-    global _clf_model
-    if _clf_model is None:
-        _clf_model = MobileNetV2(weights="imagenet")
-    return _clf_model
+def _load_emotion_model():
+    global _emotion_model
+    if _emotion_model is None:
+        if os.path.exists("emotion_model.h5"):
+            _emotion_model = tf.keras.models.load_model("emotion_model.h5")
+        else:
+            ejecutar_mobilenet("archive.zip", epochs=3, batch_size=32, learning_rate=1e-4, save_path="emotion_model.h5")
+            _emotion_model = tf.keras.models.load_model("emotion_model.h5")
+    return _emotion_model
 
 
-def clasificar_imagen(img_path):
-    """Clasifica una imagen usando MobileNetV2 preentrenada en ImageNet."""
-    model = _load_model()
+def predecir_emocion(img_path):
+    """Devuelve la emoción detectada en la imagen."""
+    model = _load_emotion_model()
     img = image.load_img(img_path, target_size=(224, 224))
     arr = image.img_to_array(img)
     arr = np.expand_dims(arr, axis=0)
     arr = preprocess_input(arr)
     preds = model.predict(arr)
-    label, prob = decode_predictions(preds, top=1)[0][0][1:]
-    return label, float(prob)
+    idx = int(np.argmax(preds))
+    prob = float(np.max(preds))
+    label = _emotion_labels[idx]
+    return label, prob
