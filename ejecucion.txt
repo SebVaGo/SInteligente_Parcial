@@ -1,4 +1,0 @@
-Navegar hasta la direcciòn donde se encuentra el archivo main.py e instalar las dependencias que se encuentran en el archivo 
-requirements.txt a travès de pip install -r requirements.txt
-
-Luego ejecutar python main.py
