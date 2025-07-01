@@ -14,8 +14,11 @@ import backprop_module as backprop
 
 try:
     import mobilenet
-except Exception:  # TensorFlow may not be installed
+except Exception:  
     mobilenet = None
+
+from clustering import run_clustering
+
 
 app = FastAPI(title="Algoritmos Inteligentes")
 
@@ -47,7 +50,41 @@ class NBImageResponse(BaseModel):
     label: int
     probability: float
 
+class ClusteringSilhouette(BaseModel):
+    kmeans: float
+    dbscan: float
+    agglo: float
+
+class ClusteringLabels(BaseModel):
+    kmeans: List[int]
+    dbscan: List[int]
+    agglo: List[int]
+
+class ClusteringResponse(BaseModel):
+    silhouette: ClusteringSilhouette
+    labels: ClusteringLabels
+    pca: List[List[float]]
+
 nb_state = {"model": None, "le": None, "features": None}
+
+@app.post("/api/clustering", response_model=ClusteringResponse)
+async def clustering_endpoint(file: UploadFile = File(...)):
+    # Aceptamos solo CSV
+    if file.content_type != "text/csv":
+        raise HTTPException(status_code=400, detail="Formato de archivo no soportado, se espera un CSV")
+
+    # Guardar temporalmente
+    data = await file.read()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
+        tmp.write(data)
+        tmp_path = tmp.name
+
+    try:
+        result = run_clustering(tmp_path)
+    finally:
+        os.remove(tmp_path)
+
+    return result
 
 @app.post("/api/naive_bayes/train", response_model=NBTrainResponse)
 def train_nb(req: NBTrainRequest):
