@@ -1,13 +1,8 @@
-# sentiment.py
 import threading
 from typing import Optional
 from fastapi import HTTPException
 from transformers import pipeline, Pipeline
-
-# Nombre del modelo de Transformers
 MODEL_NAME = "pysentimiento/robertuito-sentiment-analysis"
-
-# Analizador (se cargará en startup)
 sentiment_analyzer: Optional[Pipeline] = None
 _analyzer_lock = threading.Lock()
 
@@ -26,7 +21,6 @@ def init_sentiment_model() -> None:
                     tokenizer=MODEL_NAME,
                 )
             except Exception as e:
-                # Propagar como HTTPException para que FastAPI devuelva JSON
                 raise HTTPException(
                     status_code=500,
                     detail=f"Error al cargar el modelo de sentimiento '{MODEL_NAME}': {e}"
@@ -40,8 +34,6 @@ def predict_sentiment(texto: str) -> str:
     """
     if not texto or not isinstance(texto, str):
         raise HTTPException(status_code=400, detail="Texto inválido para análisis de sentimiento.")
-
-    # Asegurar inicialización
     if sentiment_analyzer is None:
         init_sentiment_model()
 

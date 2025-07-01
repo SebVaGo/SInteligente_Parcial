@@ -1,4 +1,3 @@
-# mobilenet_module.py
 import os
 from typing import Tuple, List
 import numpy as np
@@ -38,12 +37,10 @@ def load_labels(labels_path: str = None) -> List[str]:
         return [line.strip() for line in f if line.strip()]
 
 
-# Inicializar modelo y etiquetas globalmente
 global_model = load_mobilenet_model()
 try:
     global_labels = load_labels()
 except FileNotFoundError:
-    # Clases por defecto si no hay labels.txt
     global_labels = [
         "surprise", "fear", "happy",
         "neutral", "sad", "angry", "disgust"
@@ -55,22 +52,15 @@ def classify_image(img_path: str) -> Tuple[str, float]:
     Clasifica la imagen usando el modelo MobileNetV2 personalizado.
     Devuelve la etiqueta y la probabilidad asociada.
     """
-    # Cargar y preprocesar imagen
     img = image.load_img(img_path, target_size=(224, 224))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
-    # Si tu modelo requiere normalización, descomenta:
-    # from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-    # x = preprocess_input(x)
 
-    # Inferencia
     preds_raw = global_model.predict(x)
     if preds_raw is None:
         raise RuntimeError("Falló la predicción: preds_raw es None")
-    # Aplanar vector de predicciones
     preds = preds_raw.flatten()
 
-    # Seleccionar la clase más probable
     idx = int(np.argmax(preds))
     label = global_labels[idx] if idx < len(global_labels) else str(idx)
     prob = float(preds[idx])
