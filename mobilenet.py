@@ -6,6 +6,7 @@ from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras import layers, models, optimizers
+from tensorflow.keras.models import load_model
 
 def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate):
     """
@@ -80,6 +81,7 @@ def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate):
     eval_metrics = {'loss': eval_loss, 'accuracy': eval_acc}
 
     return history, eval_metrics
+    model.save("modelo_emociones.h5")
 
 
 _clf_model = None
