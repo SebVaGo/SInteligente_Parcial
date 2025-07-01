@@ -1,9 +1,10 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import load_digits
+from sklearn.pipeline import Pipeline
 from PIL import Image
 import numpy as np
 
@@ -48,10 +49,13 @@ def entrenar_modelo(
     logs.append(f"Split train/test: test_size={test_size}, random_state={random_state}")
     logs.append(f"  → Train: {X_train.shape}, Test: {X_test.shape}")
 
-    # Entrenamiento
-    model = LogisticRegression(max_iter=1000)
+    # Entrenamiento con escalado de features
+    model = Pipeline([
+        ("scaler", StandardScaler()),
+        ("nb", GaussianNB()),
+    ])
     model.fit(X_train, y_train)
-    logs.append("Modelo LogisticRegression entrenado")
+    logs.append("Modelo GaussianNB entrenado con escalado")
 
     # Precisión
     accuracy = model.score(X_test, y_test)
@@ -65,14 +69,17 @@ _digits_model = None
 
 
 def _load_digits_model():
-    """Entrena un clasificador de dígitos con LogisticRegression si no existe."""
+    """Entrena un clasificador de dígitos con GaussianNB si no existe."""
     global _digits_model
     if _digits_model is None:
         digits = load_digits()
         X_train, X_test, y_train, y_test = train_test_split(
             digits.data, digits.target, test_size=0.2, random_state=42
         )
-        model = LogisticRegression(max_iter=1000)
+        model = Pipeline([
+            ("scaler", StandardScaler()),
+            ("nb", GaussianNB()),
+        ])
         model.fit(X_train, y_train)
         _digits_model = model
     return _digits_model
