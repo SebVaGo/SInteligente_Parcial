@@ -2,9 +2,10 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
 from sklearn.datasets import load_digits
 from PIL import Image
+import numpy as np
 
 def entrenar_modelo(
     url: str = 'https://github.com/YBIFoundation/Dataset/raw/main/Cancer.csv',
@@ -48,9 +49,9 @@ def entrenar_modelo(
     logs.append(f"  → Train: {X_train.shape}, Test: {X_test.shape}")
 
     # Entrenamiento
-    model = GaussianNB()
+    model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
-    logs.append("Modelo GaussianNB entrenado")
+    logs.append("Modelo LogisticRegression entrenado")
 
     # Precisión
     accuracy = model.score(X_test, y_test)
@@ -64,14 +65,14 @@ _digits_model = None
 
 
 def _load_digits_model():
-    """Entrena un clasificador de dígitos con GaussianNB si no existe."""
+    """Entrena un clasificador de dígitos con LogisticRegression si no existe."""
     global _digits_model
     if _digits_model is None:
         digits = load_digits()
         X_train, X_test, y_train, y_test = train_test_split(
             digits.data, digits.target, test_size=0.2, random_state=42
         )
-        model = GaussianNB()
+        model = LogisticRegression(max_iter=1000)
         model.fit(X_train, y_train)
         _digits_model = model
     return _digits_model

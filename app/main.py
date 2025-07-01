@@ -18,7 +18,7 @@ except Exception:
     mobilenet = None
 
 from clustering import run_clustering
-from sentiment import predict_sentiment
+from sentiment import predict_sentiment, init_sentiment_model
 
 
 
@@ -26,6 +26,11 @@ app = FastAPI(title="Algoritmos Inteligentes")
 
 # Serve frontend
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+@app.on_event("startup")
+async def startup_event():
+    """Pre-carga los modelos necesarios."""
+    init_sentiment_model()
 
 @app.get("/")
 def index():
