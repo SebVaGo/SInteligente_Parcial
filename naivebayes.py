@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import load_digits
 from PIL import Image
+import numpy as np
 
 def entrenar_modelo(
     url: str = 'https://github.com/YBIFoundation/Dataset/raw/main/Cancer.csv',
