@@ -26,33 +26,25 @@ def run_clustering(
     Ejecuta clustering sobre un CSV de clientes.
     Devuelve puntuaciones de silueta, etiquetas y componentes PCA.
     """
-    # Cargar datos
     df = pd.read_csv(file_path)
 
-    # Codificar columna categórica si existe
     if 'Categoria_Favorita' in df.columns:
         df = pd.get_dummies(df, columns=['Categoria_Favorita'])
 
-    # Estandarizar
     X_scaled = StandardScaler().fit_transform(df.values)
 
-    # Reducir dimensionalidad para visualización
     pca = PCA(n_components=2)
     X_pca = pca.fit_transform(X_scaled)
 
-    # K-Means
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     km_labels = kmeans.fit_predict(X_scaled)
 
-    # DBSCAN
     dbscan = DBSCAN(eps=eps, min_samples=min_samples)
     db_labels = dbscan.fit_predict(X_scaled)
 
-    # Agrupamiento Jerárquico
     agglo = AgglomerativeClustering(n_clusters=n_clusters)
     ag_labels = agglo.fit_predict(X_scaled)
 
-    # Coeficientes de silueta
     sil_km = safe_silhouette(X_scaled, km_labels)
     sil_db = safe_silhouette(X_scaled, db_labels)
     sil_ag = safe_silhouette(X_scaled, ag_labels)
