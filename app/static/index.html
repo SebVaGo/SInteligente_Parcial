@@ -23,30 +23,18 @@
     </nav>
     <div class="flex-grow-1 p-4">
         <section id="nb" class="content-section">
-            <h3>Naive Bayes</h3>
+            <h3>Naive Bayes (Dígitos)</h3>
             <form id="form-nb" class="row g-3">
-                <div class="col-md-2">
-                    <label class="form-label">Test size</label>
-                    <input type="number" step="0.05" class="form-control" id="nb_test" value="0.2">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Random state</label>
-                    <input type="number" class="form-control" id="nb_rs" value="22">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Imputer</label>
-                    <select class="form-select" id="nb_imp">
-                        <option value="mean" selected>mean</option>
-                        <option value="median">median</option>
-                    </select>
+                <div class="col-6">
+                    <label class="form-label">Imagen</label>
+                    <input type="file" class="form-control" id="nb_img" accept=".png,.jpg,.jpeg">
                 </div>
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Ejecutar</button>
+                    <button type="submit" class="btn btn-primary">Clasificar</button>
                 </div>
             </form>
-            <pre class="mt-3" id="nb_res"></pre>
+            <div id="nb_res"></div>
         </section>
-
         <section id="mochila" class="content-section">
             <h3>Algoritmo Genético - Mochila</h3>
             <form id="form-mochila" class="mb-3">
@@ -125,7 +113,6 @@
                 </div>
             </form>
             <div id="mn_res"></div>
-
         </section>
     </div>
 
@@ -140,16 +127,16 @@ menuLinks.forEach(l => l.addEventListener('click', e => {
 // Show first section
 if (sections.length) sections[0].style.display = 'block';
 
-// Naive Bayes
+// Naive Bayes imagen
 document.getElementById('form-nb').addEventListener('submit', async e => {
     e.preventDefault();
-    const body = {
-        test_size: parseFloat(document.getElementById('nb_test').value),
-        random_state: parseInt(document.getElementById('nb_rs').value),
-        imputer_strategy: document.getElementById('nb_imp').value
-    };
-    const r = await fetch('/api/naive_bayes/train', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    document.getElementById('nb_res').textContent = JSON.stringify(await r.json(), null, 2);
+    const inp = document.getElementById('nb_img');
+    if(!inp.files.length) return;
+    const fd = new FormData();
+    fd.append('file', inp.files[0]);
+    const r = await fetch('/api/naive_bayes/image', {method:'POST', body:fd});
+    const res = await r.json();
+    document.getElementById('nb_res').innerHTML = `<p><strong>Predicción:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
 });
 
 // Mochila
@@ -281,7 +268,6 @@ document.getElementById('form-mn').addEventListener('submit', async e => {
     const r = await fetch('/api/mobilenet', {method:'POST', body:fd});
     const res = await r.json();
     document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
-
 });
 </script>
 </body>
