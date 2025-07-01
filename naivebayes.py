@@ -15,7 +15,8 @@ def entrenar_modelo(
     imputer_strategy: str = 'mean'
 ):
     logs = []
-    cancer = pd.read_csv(url)
+    # Algunos datasets públicos pueden no estar en UTF-8
+    cancer = pd.read_csv(url, encoding="latin1")
     logs.append(f"Cargado CSV con {cancer.shape[0]} filas y {cancer.shape[1]} columnas")
 
     # Codificar diagnóstico
