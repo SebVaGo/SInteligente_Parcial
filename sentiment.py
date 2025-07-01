@@ -26,8 +26,10 @@ def init_sentiment_model() -> None:
                     tokenizer=MODEL_NAME,
                 )
             except Exception as e:
-                raise RuntimeError(
-                    f"Error al cargar el modelo de sentimiento '{MODEL_NAME}': {e}"
+                # Propagar como HTTPException para que FastAPI devuelva JSON
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Error al cargar el modelo de sentimiento '{MODEL_NAME}': {e}"
                 )
 
 
