@@ -166,7 +166,7 @@ button.btn-primary:hover {
 
 .opcion-inicio {
     display: flex;
-    min-width: 260px;
+    min-width: 500px;
     cursor: pointer;
     background-color: var(--blue-mid);
     color: var(--white);
