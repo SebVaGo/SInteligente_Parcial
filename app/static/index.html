@@ -305,6 +305,21 @@
             }
         });
 
+        document.getElementById('form-nb').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fileInput = document.getElementById('nb_img');
+            if (!fileInput.files.length) return;
+
+            const fd = new FormData();
+            fd.append('file', fileInput.files[0]);
+
+            const r = await fetch('/api/naive_bayes/image', { method: 'POST', body: fd });
+            const res = await r.json();
+            const diag = res.diagnosis;
+            const prob = (res.probability * 100).toFixed(2);
+            document.getElementById('nb_res').innerHTML = `<p><strong>Diagnóstico:</strong> ${diag} (${prob}%)</p>`;
+        });
+
         // Mochila
         const moObjs = [
             { nombre: 'A', peso: 2, valor: 3 },

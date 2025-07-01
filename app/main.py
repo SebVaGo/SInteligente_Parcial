@@ -51,7 +51,7 @@ class NBPredictResponse(BaseModel):
     diagnosis: str
 
 class NBImageResponse(BaseModel):
-    label: int
+    diagnosis: str
     probability: float
 
 class ClusteringSilhouette(BaseModel):
@@ -131,7 +131,8 @@ async def nb_from_image(file: UploadFile = File(...)):
         label, prob = naivebayes.clasificar_imagen(tmp_path)
     finally:
         os.remove(tmp_path)
-    return NBImageResponse(label=label, probability=prob)
+    diagnosis = "Cáncer" if label == 1 else "No cáncer"
+    return NBImageResponse(diagnosis=diagnosis, probability=prob)
 
 # Endpoint en main.py
 @app.post("/api/sentiment", response_model=SentimentResponse)
