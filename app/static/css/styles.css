@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --blue-dark: #5FA8D3;
+    --blue-mid: #62B6CB;
+    --blue-light: #BEE9E8;
+    --bg-light: #E7ECEF;
+    --gray: #1B4965;
+    --text-dark: #1a1a1a;
+    --white: #ffffff;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: var(--white);
+    color: var(--text-dark);
+    display: flex;
+    flex: 1;
+    height: 100vh;
+    justify-content: center;
+    margin: 0;
+}
+
+#sidebar {
+    background-color: var(--white);
+    height: 100vh;
+    top: 0;
+    left: 0;
+    width: 280px;
+    overflow-y: auto;
+    border-radius: 0 24px 24px 0;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+    padding-top: 2rem;
+}
+
+#sidebar h4 {
+    font-size: 1.4rem;
+    color: var(--white);
+    margin: 2rem 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+#sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    color: var(--gray);
+    font-weight: 500;
+    margin: 6px 12px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#sidebar .nav-link i {
+    font-size: 1.1rem;
+}
+
+#sidebar .nav-link:hover,
+#sidebar .nav-link.active {
+    background-color: var(--blue-mid); 
+    color: var(--white);
+}
+
+.flex-grow-1 {
+    margin-left: 200px;
+    padding: 30px;
+    background-color: var(--white);
+    min-height: 100vh;
+}
+
+h3 {
+    color: var(--blue-dark);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--blue-light);
+    padding-bottom: 0.5rem;
+}
+
+/* Forms */
+form .form-label {
+    font-weight: 500;
+    color: var(--blue-dark);
+}
+
+form input,
+form select {
+    background-color: var(--white);
+    border-color: var(--gray);
+}
+
+button.btn-primary {
+    background-color: var(--blue-mid);
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+button.btn-primary:hover {
+    background-color: var(--blue-light);
+}
+
+/* Tables */
+.table-sm {
+    background-color: var(--white);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.table-sm thead {
+    background-color: var(--blue-light);
+    color: var(--blue-dark);
+}
+
+.table-sm td,
+.table-sm th {
+    vertical-align: middle;
+    border-color: var(--gray);
+}
+
+#nb_res,
+#mn_res,
+#bp_res,
+#mo_res {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--white);
+    border-left: 5px solid var(--blue-mid);
+    border-radius: 4px;
+    color: var(--blue-dark);
+}
+
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+.sections{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px 40px;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+#inicio {
+    background-color: var(--white);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+#inicio h2 {
+    color: var(--blue-dark);
+}
+
+.opciones {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+.opcion-inicio {
+    display: flex;
+    min-width: 260px;
+    cursor: pointer;
+    background-color: var(--blue-mid);
+    color: var(--white);
+    padding: 16px 16px;
+    border: none;
+    border-radius: 16px;
+    transition: transform 0.2s ease;
+}
+
+.opcion-inicio .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.opcion-inicio:hover {
+    transform: translateY(-5px);
+    background-color: var(--blue-mid);
+}
+
+.icon-opcion{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--white);
+}
+
+.icon-opcion svg{
+    width: 24px;
+    height: 24px;
+  
+}
+
+.icon-opcion img {
+    width: 24px;
+    height: 24px;
+    color: var(--blue-dark);
+}
+
+.opcion-inicio .card-title {
+    font-weight: bold;
+    color: var(--white);
+}
+
+.opcion-button {
+    background-color: var(--bg-light);
+    color: var(--blue-dark);
+    border: none;
+    padding: 16px 24px;
+    border-radius: 24px;
+    transition: background-color 0.2s ease;
+}
+
+.opcion-button:hover {
+    background-color: var(--blue-light);
+    color: var(--gray);
+}
+
+.opcion-button a {
+    color: inherit;
+    text-decoration: none;
+}
+

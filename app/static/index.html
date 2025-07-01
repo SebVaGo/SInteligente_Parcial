@@ -1,274 +1,395 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Algoritmos Inteligentes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { min-height: 100vh; }
-        #sidebar { width: 200px; }
-        .content-section { display: none; }
-    </style>
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/javascript/javascript.js">
 </head>
-<body class="d-flex">
+
+<body>
     <nav id="sidebar" class="bg-dark text-white p-3 flex-shrink-0">
         <h4>Algoritmos</h4>
         <ul class="nav nav-pills flex-column" id="menu">
-            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="nb">Naive Bayes</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mochila">Mochila</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="backprop">Backprop</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="inicio">Inicio</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="nb">Clasificación Naive Bayes</a>
+            </li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mochila">Algoritmo genético
+                    Mochila</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="backprop">Backpropagation</a></li>
             <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mobilenet">MobileNetV2</a></li>
         </ul>
     </nav>
-    <div class="flex-grow-1 p-4">
-        <section id="nb" class="content-section">
-            <h3>Naive Bayes (Dígitos)</h3>
-            <form id="form-nb" class="row g-3">
-                <div class="col-6">
-                    <label class="form-label">Imagen</label>
-                    <input type="file" class="form-control" id="nb_img" accept=".png,.jpg,.jpeg">
+    <div class="sections">
+        <section id="inicio" class="content-section active text-center">
+            <div class="row align-items-center justify-content-center mb-5 p-8 rounded-4"
+                style="background:#62B6CB; padding: 24px 32px ;">
+                <div class="col-md-7 text-md-start text-center">
+                    <h2 class="mb-2" style="color:#ffff;">¡Bienvenido al proyecto de software inteligente!</h2>
+                    <p class="mb-3" style="color:#ffff ;font-size:1.1rem; margin-top: 24px;">
+                        Aquí encontrarás una colección de algoritmos inteligentes para explorar y aprender. Cada uno
+                        ofrece una forma única de resolver problemas y optimizar tareas. ¡Disfruta de este viaje!
+                    </p>
                 </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Clasificar</button>
+                <div class="col-md-5 text-center mt-4 mt-md-0">
+                    <img src="/static/image/Machine Learning 1 (2).svg" alt="Bienvenida"
+                        style="max-width:260px;width:100%;">
                 </div>
-            </form>
-            <div id="nb_res"></div>
+            </div>
+            <div class="row justify-content-center g-4 opciones">
+                <div class="col">
+                    <div class="card h-100 shadow-sm opcion-inicio" data-target="nb">
+                        <div class="card-body">
+                            <div class="icon-opcion">
+                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
+                                        fill="#5FA8D3" />
+                                </svg>
+                            </div>
+                            <h5 class="card-title">Naive Bayes</h5>
+                            <p class="card-text">Detecta posibles casos de cáncer a partir de imágenes, utilizando un modelo probabilístico de clasificación.</p>
+                            <button class="opcion-button" data-target="nb">Ver proyecto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm opcion-inicio" data-target="mochila">
+                        <div class="card-body">
+                            <div class="icon-opcion">
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M24.4958 5.72416C29.4769 8.1508 32.9092 13.2626 32.9092 19.1761V31.1851C32.9092 33.8443 30.7535 36 28.0943 36H7.81493C5.15571 36 3 33.8443 3 31.1851V19.1761C3 13.2626 6.43228 8.15082 11.4134 5.72418C11.4043 5.34979 11.439 4.97439 11.5177 4.60363C11.696 3.76421 12.0954 2.97072 12.6854 2.28359C13.2756 1.59645 14.0408 1.03378 14.9228 0.638413C15.805 0.243051 16.7807 0.0254226 17.7757 0.00209628C18.7707 -0.0212291 19.7589 0.150364 20.6649 0.503812C21.5709 0.857255 22.3709 1.38324 23.0038 2.04171C23.6369 2.70017 24.0863 3.47376 24.3178 4.30357C24.448 4.77014 24.5073 5.24757 24.4958 5.72416ZM15.5415 4.41518C15.5931 4.33851 15.6497 4.26417 15.7112 4.19256C15.9624 3.89999 16.2882 3.66043 16.6638 3.4921C17.0394 3.32376 17.4547 3.2311 17.8784 3.22117C18.3021 3.21124 18.7228 3.2843 19.1085 3.43478C19.4943 3.58527 19.8349 3.80922 20.1044 4.08957C20.2028 4.19197 20.2909 4.30092 20.3678 4.41519C19.5822 4.28774 18.7762 4.2215 17.9546 4.2215C17.133 4.2215 16.327 4.28774 15.5415 4.41518ZM7.11242 19.4179C7.11242 13.2964 11.9666 8.33391 17.9545 8.33391C23.9424 8.33391 28.7966 13.2964 28.7966 19.4179V21.9801H7.11242V19.4179ZM7.11242 25.9057V30.9871C7.11242 31.4843 7.50669 31.8874 7.99304 31.8874H27.9159C28.4022 31.8874 28.7966 31.4843 28.7966 30.9871V25.9057H7.11242ZM13.8005 11.2315C11.5063 11.2315 9.64646 13.0913 9.64646 15.3855V16.4241C9.64646 18.7183 11.5063 20.5781 13.8005 20.5781H22.1086C24.4028 20.5781 26.2627 18.7183 26.2627 16.4241V15.3855C26.2627 13.0913 24.4028 11.2315 22.1086 11.2315H13.8005ZM13.7813 14.9103C13.6601 14.9103 13.5617 15.0086 13.5617 15.1299V16.8871C13.5617 17.0084 13.6601 17.1067 13.7813 17.1067H22.1279C22.2492 17.1067 22.3475 17.0084 22.3475 16.8871V15.1299C22.3475 15.0086 22.2492 14.9103 22.1279 14.9103H13.7813Z"
+                                        fill="#8dda90" />
+                                </svg>
+                            </div>
+                            <h5 class="card-title">Mochila</h5>
+                            <p class="card-text">Encuentra la mejor combinación de objetos para maximizar el valor total, ideal para resolver problemas de optimización como la mochila.</p>
+                            <button class="opcion-button" data-target="mochila">Ver proyecto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm opcion-inicio" data-target="backprop">
+                        <div class="card-body">
+                             <div class="icon-opcion">
+                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
+                                        fill="#5FA8D3" />
+                                </svg>
+                            </div>
+                            <h5 class="card-title">Backpropagation</h5>
+                            <p class="card-text">Entrena redes neuronales artificiales simples para aprender patrones a partir de ejemplos numéricos o datasets personalizados</p>
+                            <button class="opcion-button" data-target="backprop"> Ver proyecto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm opcion-inicio" data-target="mobilenet">
+                        <div class="card-body">
+                             <div class="icon-opcion">
+                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
+                                        fill="#5FA8D3" />
+                                </svg>
+                            </div>
+                            <h5 class="card-title"> Clasificación de imágenes con Transfer Learning.</h5>
+                            <p class="card-text">Clasifica emociones humanas a partir de imágenes faciales mediante un modelo entrenado con Transfer Learning.</p>
+                            <button class="opcion-button" data-target="mobilenet"> Ver proyecto</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col">
+                    <div class="card h-100 shadow-sm opcion-inicio" data-target="mobilenet">
+                        <div class="card-body">
+                             <div class="icon-opcion">
+                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
+                                        fill="#8dda90" />
+                                </svg>
+                            </div>
+                            <h5 class="card-title">  MobileNetV2</h5>
+                            <p class="card-text">Clasificación de imágenes con Transfer Learning.</p>
+                            <button class="opcion-button" data-target="mobilenet">Ver proyecto</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
-        <section id="mochila" class="content-section">
-            <h3>Algoritmo Genético - Mochila</h3>
-            <form id="form-mochila" class="mb-3">
-                <div class="mb-3">
-                    <label class="form-label">Capacidad</label>
-                    <input type="number" step="0.1" class="form-control" id="mo_cap" value="6">
-                </div>
-                <div class="row g-2 align-items-end">
-                    <div class="col-4">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="mo_nombre">
+        <div class="p-4">
+            <section id="nb" class="content-section">
+                <h3>Naive Bayes (Dígitos)</h3>
+                <form id="form-nb" class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label">Imagen</label>
+                        <input type="file" class="form-control" id="nb_img" accept=".png,.jpg,.jpeg">
                     </div>
-                    <div class="col">
-                        <label class="form-label">Peso</label>
-                        <input type="number" step="0.1" class="form-control" id="mo_peso">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Clasificar</button>
                     </div>
-                    <div class="col">
-                        <label class="form-label">Valor</label>
-                        <input type="number" step="0.1" class="form-control" id="mo_valor">
+                </form>
+                <div id="nb_res"></div>
+            </section>
+            <section id="mochila" class="content-section">
+                <h3>Algoritmo Genético - Mochila</h3>
+                <form id="form-mochila" class="mb-3">
+                    <div class="mb-3">
+                        <label class="form-label">Capacidad</label>
+                        <input type="number" step="0.1" class="form-control" id="mo_cap" value="6">
                     </div>
-                    <div class="col-auto">
-                        <button type="button" id="mo_add" class="btn btn-secondary">Agregar</button>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-4">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="mo_nombre">
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Peso</label>
+                            <input type="number" step="0.1" class="form-control" id="mo_peso">
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Valor</label>
+                            <input type="number" step="0.1" class="form-control" id="mo_valor">
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" id="mo_add" class="btn btn-secondary">Agregar</button>
+                        </div>
                     </div>
-                </div>
-                <table class="table table-sm mt-3" id="mo_table">
-                    <thead>
-                        <tr><th>#</th><th>Nombre</th><th>Peso</th><th>Valor</th><th></th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <button type="submit" class="btn btn-primary">Ejecutar</button>
-            </form>
-            <pre id="mo_res"></pre>
-        </section>
+                    <table class="table table-sm mt-3" id="mo_table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>Peso</th>
+                                <th>Valor</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary">Ejecutar</button>
+                </form>
+                <pre id="mo_res"></pre>
+            </section>
 
-        <section id="backprop" class="content-section">
-            <h3>Backpropagation</h3>
-            <form id="form-bp" class="mb-3">
-                <div class="row g-2 align-items-end">
-                    <div class="col">
-                        <label class="form-label">Entradas</label>
-                        <input type="text" class="form-control" id="bp_inputs">
+            <section id="backprop" class="content-section">
+                <h3>Backpropagation</h3>
+                <form id="form-bp" class="mb-3">
+                    <div class="row g-2 align-items-end">
+                        <div class="col">
+                            <label class="form-label">Entradas</label>
+                            <input type="text" class="form-control" id="bp_inputs">
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Salidas</label>
+                            <input type="text" class="form-control" id="bp_outputs">
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-secondary" id="bp_add">Agregar</button>
+                        </div>
                     </div>
-                    <div class="col">
-                        <label class="form-label">Salidas</label>
-                        <input type="text" class="form-control" id="bp_outputs">
+                    <div class="mt-3">
+                        <label class="form-label">o Cargar CSV</label>
+                        <input type="file" class="form-control" id="bp_csv" accept=".csv">
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-secondary" id="bp_add">Agregar</button>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <label class="form-label">o Cargar CSV</label>
-                    <input type="file" class="form-control" id="bp_csv" accept=".csv">
-                </div>
-                <table class="table table-sm mt-3" id="bp_table">
-                    <thead>
-                        <tr><th>#</th><th>Entradas</th><th>Salidas</th><th></th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <button type="submit" class="btn btn-primary">Ejecutar</button>
-            </form>
-            <div id="bp_res"></div>
-        </section>
+                    <table class="table table-sm mt-3" id="bp_table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Entradas</th>
+                                <th>Salidas</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary">Ejecutar</button>
+                </form>
+                <div id="bp_res"></div>
+            </section>
 
-        <section id="mobilenet" class="content-section">
-            <h3>Transfer Learning MobileNetV2</h3>
-            <form id="form-mn" class="row g-3">
-                <div class="col-6">
-                    <label class="form-label">Imagen</label>
-                    <input type="file" class="form-control" id="mn_img" accept=".png,.jpg,.jpeg">
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Clasificar</button>
-                </div>
-            </form>
-            <div id="mn_res"></div>
-        </section>
+            <section id="mobilenet" class="content-section">
+                <h3>Transfer Learning MobileNetV2</h3>
+                <form id="form-mn" class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label">Imagen</label>
+                        <input type="file" class="form-control" id="mn_img" accept=".png,.jpg,.jpeg">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Clasificar</button>
+                    </div>
+                </form>
+                <div id="mn_res"></div>
+            </section>
+        </div>
     </div>
 
-<script>
-const sections = document.querySelectorAll('.content-section');
-const menuLinks = document.querySelectorAll('#menu .nav-link');
-menuLinks.forEach(l => l.addEventListener('click', e => {
-    e.preventDefault();
-    sections.forEach(s => s.style.display = 'none');
-    document.getElementById(l.dataset.target).style.display = 'block';
-}));
-// Show first section
-if (sections.length) sections[0].style.display = 'block';
+    <script>
+        const sections = document.querySelectorAll('.content-section');
+        const menuLinks = document.querySelectorAll('#menu .nav-link');
+        menuLinks.forEach(l => l.addEventListener('click', e => {
+            e.preventDefault();
+            sections.forEach(s => s.style.display = 'none');
+            document.getElementById(l.dataset.target).style.display = 'block';
+        }));
+        // Show first section
+        sections.forEach(s => s.style.display = 'none');
+        document.getElementById('inicio').style.display = 'block';
 
-// Naive Bayes imagen
-document.getElementById('form-nb').addEventListener('submit', async e => {
-    e.preventDefault();
-    const inp = document.getElementById('nb_img');
-    if(!inp.files.length) return;
-    const fd = new FormData();
-    fd.append('file', inp.files[0]);
-    const r = await fetch('/api/naive_bayes/image', {method:'POST', body:fd});
-    const res = await r.json();
-    document.getElementById('nb_res').innerHTML = `<p><strong>Predicción:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
-});
-
-// Mochila
-const moObjs = [
-    {nombre:'A', peso:2, valor:3},
-    {nombre:'B', peso:1, valor:1},
-    {nombre:'C', peso:3, valor:4}
-];
-function refreshMoTable() {
-    const tbody = document.querySelector('#mo_table tbody');
-    tbody.innerHTML = '';
-    moObjs.forEach((o, i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${i+1}</td><td>${o.nombre}</td><td>${o.peso}</td><td>${o.valor}</td>` +
-                       `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
-        tbody.appendChild(tr);
-    });
-    tbody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
-        moObjs.splice(btn.dataset.idx, 1);
-        refreshMoTable();
-    }));
-}
-refreshMoTable();
-document.getElementById('mo_add').addEventListener('click', () => {
-    const nombre = document.getElementById('mo_nombre').value.trim();
-    const peso = parseFloat(document.getElementById('mo_peso').value);
-    const valor = parseFloat(document.getElementById('mo_valor').value);
-    if (nombre && !isNaN(peso) && !isNaN(valor)) {
-        moObjs.push({nombre, peso, valor});
-        document.getElementById('mo_nombre').value = '';
-        document.getElementById('mo_peso').value = '';
-        document.getElementById('mo_valor').value = '';
-        refreshMoTable();
-    }
-});
-document.getElementById('form-mochila').addEventListener('submit', async e => {
-    e.preventDefault();
-    const body = {
-        capacidad: parseFloat(document.getElementById('mo_cap').value),
-        objetos: moObjs
-    };
-    const r = await fetch('/api/mochila', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(body)
-    });
-    const res = await r.json();
-    let html = `<p><strong>Valor máximo:</strong> ${res.valor}</p>`;
-    html += `<p><strong>Peso usado:</strong> ${res.peso} / ${body.capacidad}</p>`;
-    html += '<p><strong>Elementos seleccionados:</strong></p><ul>';
-    res.seleccion.forEach(o => {
-        html += `<li>${o.nombre} (peso ${o.peso}, valor ${o.valor})</li>`;
-    });
-    html += '</ul>';
-    document.getElementById('mo_res').innerHTML = html;
-});
-
-// Backprop
-const bpData = [
-    {inputs:[0,0], outputs:[0]},
-    {inputs:[0,1], outputs:[1]},
-    {inputs:[1,0], outputs:[1]},
-    {inputs:[1,1], outputs:[0]}
-];
-function refreshBpTable(){
-    const tbody = document.querySelector('#bp_table tbody');
-    tbody.innerHTML = '';
-    bpData.forEach((d,i)=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML = `<td>${i+1}</td><td>${d.inputs.join(',')}</td><td>${d.outputs.join(',')}</td>`+
-                       `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
-        tbody.appendChild(tr);
-    });
-    tbody.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{
-        bpData.splice(btn.dataset.idx,1); refreshBpTable();
-    }));
-}
-refreshBpTable();
-document.getElementById('bp_add').addEventListener('click',()=>{
-    const ins = document.getElementById('bp_inputs').value.trim();
-    const outs = document.getElementById('bp_outputs').value.trim();
-    if(!ins || !outs) return;
-    const inArr = ins.split(',').map(Number);
-    const outArr = outs.split(',').map(Number);
-    if(inArr.some(isNaN) || outArr.some(isNaN)) return;
-    bpData.push({inputs:inArr, outputs:outArr});
-    document.getElementById('bp_inputs').value='';
-    document.getElementById('bp_outputs').value='';
-    refreshBpTable();
-});
-document.getElementById('bp_csv').addEventListener('change',e=>{
-    const file=e.target.files[0];
-    if(!file) return;
-    const reader=new FileReader();
-    reader.onload=()=>{
-        const lines=reader.result.trim().split(/\r?\n/);
-        lines.forEach(l=>{
-            const vals=l.split(',').map(Number);
-            if(vals.some(isNaN) || vals.length<2) return;
-            bpData.push({inputs:vals.slice(0,-1), outputs:[vals[vals.length-1]]});
+        // Naive Bayes imagen
+        document.getElementById('form-nb').addEventListener('submit', async e => {
+            e.preventDefault();
+            const inp = document.getElementById('nb_img');
+            if (!inp.files.length) return;
+            const fd = new FormData();
+            fd.append('file', inp.files[0]);
+            const r = await fetch('/api/naive_bayes/image', { method: 'POST', body: fd });
+            const res = await r.json();
+            document.getElementById('nb_res').innerHTML = `<p><strong>Predicción:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
         });
-        refreshBpTable();
-    };
-    reader.readAsText(file);
-});
-document.getElementById('form-bp').addEventListener('submit', async e=>{
-    e.preventDefault();
-    const body={
-        inputs:bpData.map(d=>d.inputs),
-        outputs:bpData.map(d=>d.outputs)
-    };
-    const r= await fetch('/api/backprop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const res=await r.json();
-    let html='<table class="table table-sm"><thead><tr><th>Entrada</th><th>Salida</th></tr></thead><tbody>';
-    res.result.forEach((o,i)=>{
-        html+=`<tr><td>${bpData[i].inputs.join(',')}</td><td>${o.map(v=>v.toFixed(3)).join(',')}</td></tr>`;
-    });
-    html+='</tbody></table>';
-    document.getElementById('bp_res').innerHTML=html;
-});
 
-// MobileNet
-document.getElementById('form-mn').addEventListener('submit', async e => {
-    e.preventDefault();
-    const fileInput = document.getElementById('mn_img');
-    if(!fileInput.files.length) return;
-    const fd = new FormData();
-    fd.append('file', fileInput.files[0]);
-    const r = await fetch('/api/mobilenet', {method:'POST', body:fd});
-    const res = await r.json();
-    document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
-});
-</script>
+        // Mochila
+        const moObjs = [
+            { nombre: 'A', peso: 2, valor: 3 },
+            { nombre: 'B', peso: 1, valor: 1 },
+            { nombre: 'C', peso: 3, valor: 4 }
+        ];
+        function refreshMoTable() {
+            const tbody = document.querySelector('#mo_table tbody');
+            tbody.innerHTML = '';
+            moObjs.forEach((o, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${i + 1}</td><td>${o.nombre}</td><td>${o.peso}</td><td>${o.valor}</td>` +
+                    `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
+                tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+                moObjs.splice(btn.dataset.idx, 1);
+                refreshMoTable();
+            }));
+        }
+        refreshMoTable();
+        document.getElementById('mo_add').addEventListener('click', () => {
+            const nombre = document.getElementById('mo_nombre').value.trim();
+            const peso = parseFloat(document.getElementById('mo_peso').value);
+            const valor = parseFloat(document.getElementById('mo_valor').value);
+            if (nombre && !isNaN(peso) && !isNaN(valor)) {
+                moObjs.push({ nombre, peso, valor });
+                document.getElementById('mo_nombre').value = '';
+                document.getElementById('mo_peso').value = '';
+                document.getElementById('mo_valor').value = '';
+                refreshMoTable();
+            }
+        });
+        document.getElementById('form-mochila').addEventListener('submit', async e => {
+            e.preventDefault();
+            const body = {
+                capacidad: parseFloat(document.getElementById('mo_cap').value),
+                objetos: moObjs
+            };
+            const r = await fetch('/api/mochila', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const res = await r.json();
+            let html = `<p><strong>Valor máximo:</strong> ${res.valor}</p>`;
+            html += `<p><strong>Peso usado:</strong> ${res.peso} / ${body.capacidad}</p>`;
+            html += '<p><strong>Elementos seleccionados:</strong></p><ul>';
+            res.seleccion.forEach(o => {
+                html += `<li>${o.nombre} (peso ${o.peso}, valor ${o.valor})</li>`;
+            });
+            html += '</ul>';
+            document.getElementById('mo_res').innerHTML = html;
+        });
+
+        // Backprop
+        const bpData = [
+            { inputs: [0, 0], outputs: [0] },
+            { inputs: [0, 1], outputs: [1] },
+            { inputs: [1, 0], outputs: [1] },
+            { inputs: [1, 1], outputs: [0] }
+        ];
+        function refreshBpTable() {
+            const tbody = document.querySelector('#bp_table tbody');
+            tbody.innerHTML = '';
+            bpData.forEach((d, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${i + 1}</td><td>${d.inputs.join(',')}</td><td>${d.outputs.join(',')}</td>` +
+                    `<td><button type="button" class="btn btn-sm btn-danger" data-idx="${i}">X</button></td>`;
+                tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+                bpData.splice(btn.dataset.idx, 1); refreshBpTable();
+            }));
+        }
+        refreshBpTable();
+        document.getElementById('bp_add').addEventListener('click', () => {
+            const ins = document.getElementById('bp_inputs').value.trim();
+            const outs = document.getElementById('bp_outputs').value.trim();
+            if (!ins || !outs) return;
+            const inArr = ins.split(',').map(Number);
+            const outArr = outs.split(',').map(Number);
+            if (inArr.some(isNaN) || outArr.some(isNaN)) return;
+            bpData.push({ inputs: inArr, outputs: outArr });
+            document.getElementById('bp_inputs').value = '';
+            document.getElementById('bp_outputs').value = '';
+            refreshBpTable();
+        });
+        document.getElementById('bp_csv').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const lines = reader.result.trim().split(/\r?\n/);
+                lines.forEach(l => {
+                    const vals = l.split(',').map(Number);
+                    if (vals.some(isNaN) || vals.length < 2) return;
+                    bpData.push({ inputs: vals.slice(0, -1), outputs: [vals[vals.length - 1]] });
+                });
+                refreshBpTable();
+            };
+            reader.readAsText(file);
+        });
+        document.getElementById('form-bp').addEventListener('submit', async e => {
+            e.preventDefault();
+            const body = {
+                inputs: bpData.map(d => d.inputs),
+                outputs: bpData.map(d => d.outputs)
+            };
+            const r = await fetch('/api/backprop', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await r.json();
+            let html = '<table class="table table-sm"><thead><tr><th>Entrada</th><th>Salida</th></tr></thead><tbody>';
+            res.result.forEach((o, i) => {
+                html += `<tr><td>${bpData[i].inputs.join(',')}</td><td>${o.map(v => v.toFixed(3)).join(',')}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('bp_res').innerHTML = html;
+        });
+
+        // MobileNet
+        document.getElementById('form-mn').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fileInput = document.getElementById('mn_img');
+            if (!fileInput.files.length) return;
+            const fd = new FormData();
+            fd.append('file', fileInput.files[0]);
+            const r = await fetch('/api/mobilenet', { method: 'POST', body: fd });
+            const res = await r.json();
+            document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+        });
+    </script>
+
 </body>
+
 </html>
