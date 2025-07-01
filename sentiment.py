@@ -1,35 +1,50 @@
 # sentiment.py
-import os
-from typing import List
-from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
+import threading
+from typing import Optional
 from fastapi import HTTPException
+from transformers import pipeline, Pipeline
 
-# Configurar el analizador de sentimiento usando un modelo preentrenado
-# Este modelo se descargará automáticamente la primera vez
+# Nombre del modelo de Transformers
 MODEL_NAME = "pysentimiento/robertuito-sentiment-analysis"
 
-try:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
-    sentiment_analyzer = pipeline(
-        "sentiment-analysis", model=model, tokenizer=tokenizer
-    )
-except Exception as e:
-    raise RuntimeError(
-        f"Error al cargar el modelo de sentimiento '{MODEL_NAME}': {e}"
-    )
+# Analizador (se cargará en startup)
+sentiment_analyzer: Optional[Pipeline] = None
+_analyzer_lock = threading.Lock()
+
+
+def init_sentiment_model() -> None:
+    """
+    Inicializa el pipeline de análisis de sentimiento de forma segura.
+    """
+    global sentiment_analyzer
+    with _analyzer_lock:
+        if sentiment_analyzer is None:
+            try:
+                sentiment_analyzer = pipeline(
+                    "sentiment-analysis",
+                    model=MODEL_NAME,
+                    tokenizer=MODEL_NAME,
+                )
+            except Exception as e:
+                raise RuntimeError(
+                    f"Error al cargar el modelo de sentimiento '{MODEL_NAME}': {e}"
+                )
 
 
 def predict_sentiment(texto: str) -> str:
     """
     Devuelve la clase de sentimiento ('POS', 'NEU', 'NEG') para el texto dado.
-    Usa un pipeline de Transformers que descarga el modelo automáticamente.
+    Asegura que el modelo esté inicializado antes de usarlo.
     """
     if not texto or not isinstance(texto, str):
         raise HTTPException(status_code=400, detail="Texto inválido para análisis de sentimiento.")
+
+    # Asegurar inicialización
+    if sentiment_analyzer is None:
+        init_sentiment_model()
+
     try:
         resultado = sentiment_analyzer(texto)[0]
-        # El modelo de pysentimiento usa etiquetas como 'POS', 'NEU', 'NEG'
         label = resultado.get('label')
         return label
     except Exception as e:
