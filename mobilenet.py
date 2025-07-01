@@ -6,6 +6,7 @@ from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras import layers, models, optimizers
+from tensorflow.keras.models import load_model
 
 def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate, *, save_path=None):
     """
@@ -67,6 +68,7 @@ def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate, *, save_path
         model.save(save_path)
 
     return history, eval_metrics
+    model.save("modelo_emociones.h5")
 
 
 _emotion_model = None

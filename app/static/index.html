@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/javascript/javascript.js">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -20,9 +21,10 @@
             <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mochila">Algoritmo genético
                     Mochila</a></li>
             <li class="nav-item"><a href="#" class="nav-link text-white" data-target="backprop">Backpropagation</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mobilenet">MobileNetV2</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="sentiment">Análisis de Sentimiento</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="clustering">Clustering</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mobilenet">Clasificador de
+                    imágenes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="sentiment">Análisis de
+                    Sentimiento</a></li>
         </ul>
     </nav>
     <div class="sections">
@@ -46,7 +48,7 @@
                     <div class="card h-100 shadow-sm opcion-inicio" data-target="nb">
                         <div class="card-body">
                             <div class="icon-opcion">
-                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
@@ -54,7 +56,8 @@
                                 </svg>
                             </div>
                             <h5 class="card-title">Naive Bayes</h5>
-                            <p class="card-text">Detecta posibles casos de cáncer a partir de imágenes, utilizando un modelo probabilístico de clasificación.</p>
+                            <p class="card-text">Detecta posibles casos de cáncer a partir de imágenes, utilizando un
+                                modelo probabilístico de clasificación.</p>
                             <button class="opcion-button" data-target="nb">Ver proyecto</button>
                         </div>
                     </div>
@@ -71,7 +74,8 @@
                                 </svg>
                             </div>
                             <h5 class="card-title">Mochila</h5>
-                            <p class="card-text">Encuentra la mejor combinación de objetos para maximizar el valor total, ideal para resolver problemas de optimización como la mochila.</p>
+                            <p class="card-text">Encuentra la mejor combinación de objetos para maximizar el valor
+                                total, ideal para resolver problemas de optimización como la mochila.</p>
                             <button class="opcion-button" data-target="mochila">Ver proyecto</button>
                         </div>
                     </div>
@@ -79,8 +83,8 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm opcion-inicio" data-target="backprop">
                         <div class="card-body">
-                             <div class="icon-opcion">
-                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                            <div class="icon-opcion">
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
@@ -88,7 +92,8 @@
                                 </svg>
                             </div>
                             <h5 class="card-title">Backpropagation</h5>
-                            <p class="card-text">Entrena redes neuronales artificiales simples para aprender patrones a partir de ejemplos numéricos o datasets personalizados</p>
+                            <p class="card-text">Entrena redes neuronales artificiales simples para aprender patrones a
+                                partir de ejemplos numéricos o datasets personalizados</p>
                             <button class="opcion-button" data-target="backprop"> Ver proyecto</button>
                         </div>
                     </div>
@@ -96,33 +101,44 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm opcion-inicio" data-target="mobilenet">
                         <div class="card-body">
-                             <div class="icon-opcion">
-                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                            <div class="icon-opcion">
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
-                                        d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
-                                        fill="#5FA8D3" />
+                                        d="M11.8424 16.8868C13.0835 16.8868 14.0896 15.8801 14.0896 14.6382C14.0896 13.3964 13.0835 12.3896 11.8424 12.3896C10.6013 12.3896 9.59521 13.3964 9.59521 14.6382C9.59521 15.8801 10.6013 16.8868 11.8424 16.8868Z"
+                                        fill="#8dda90" />
+                                    <path
+                                        d="M24.202 16.8868C25.4431 16.8868 26.4492 15.8801 26.4492 14.6382C26.4492 13.3964 25.4431 12.3896 24.202 12.3896C22.9609 12.3896 21.9548 13.3964 21.9548 14.6382C21.9548 15.8801 22.9609 16.8868 24.202 16.8868Z"
+                                        fill="#8dda90" />
+                                    <path
+                                        d="M13.5279 20.8219V21.2098C13.5095 22.3783 13.9347 23.5103 14.7177 24.3773C15.5008 25.2443 16.5834 25.7818 17.747 25.8813C18.36 25.9189 18.9742 25.8305 19.5516 25.6214C20.1291 25.4123 20.6576 25.087 21.1046 24.6656C21.5515 24.2442 21.9074 23.7356 22.1503 23.1712C22.3932 22.6068 22.5179 21.9986 22.5167 21.3841V20.8219C22.5167 20.3746 22.3392 19.9457 22.0231 19.6294C21.707 19.3131 21.2783 19.1355 20.8313 19.1355H15.2133C14.7663 19.1355 14.3376 19.3131 14.0216 19.6294C13.7055 19.9457 13.5279 20.3746 13.5279 20.8219Z"
+                                        fill="#8dda90" />
+                                    <path
+                                        d="M10.2188 35.3535C12.7978 35.783 15.4078 35.9993 18.0223 36C20.6367 35.9992 23.2467 35.783 25.8257 35.3535C28.2161 34.9592 30.4229 33.8253 32.136 32.1112C33.8491 30.397 34.9823 28.1888 35.3763 25.7969C35.7968 23.2231 36.0054 20.6191 35.9999 18.0111C35.9992 15.395 35.7831 12.7834 35.3538 10.2028C34.9598 7.81086 33.8266 5.60264 32.1135 3.88849C30.4004 2.17433 28.1936 1.04043 25.8032 0.646155C20.6366 -0.215385 15.363 -0.215385 10.1964 0.646155C7.80597 1.04043 5.59913 2.17433 3.88605 3.88849C2.17297 5.60264 1.03978 7.81086 0.64575 10.2028C-0.21525 15.3727 -0.21525 20.6495 0.64575 25.8194C1.0454 28.2104 2.18378 30.4159 3.90089 32.1261C5.618 33.8362 7.82751 34.9649 10.2188 35.3535ZM5.10083 10.9392C5.34115 9.47259 6.03534 8.11842 7.08557 7.06753C8.1358 6.01664 9.48912 5.32202 10.9548 5.08155C15.6323 4.30157 20.4066 4.30157 25.0841 5.08155C26.5508 5.32094 27.9054 6.01509 28.9567 7.06607C30.008 8.11705 30.703 9.4718 30.9437 10.9392C31.3247 13.277 31.5126 15.6423 31.5055 18.0111C31.5126 20.3798 31.3247 22.7451 30.9437 25.083C30.7034 26.5496 30.0092 27.9037 28.9589 28.9546C27.9087 30.0055 26.5554 30.7001 25.0897 30.9406C22.7533 31.3218 20.3895 31.5098 18.0223 31.5028C15.655 31.5099 13.2912 31.3219 10.9548 30.9406C9.48912 30.7001 8.1358 30.0055 7.08557 28.9546C6.03534 27.9037 5.34115 26.5496 5.10083 25.083C4.32134 20.4025 4.32134 15.6253 5.10083 10.9448V10.9392Z"
+                                        fill="#8dda90" />
                                 </svg>
                             </div>
                             <h5 class="card-title"> Clasificación de imágenes con Transfer Learning.</h5>
-                            <p class="card-text">Clasifica emociones humanas a partir de imágenes faciales mediante un modelo entrenado con Transfer Learning.</p>
+                            <p class="card-text">Clasifica emociones humanas a partir de imágenes faciales mediante un
+                                modelo entrenado con Transfer Learning.</p>
                             <button class="opcion-button" data-target="mobilenet"> Ver proyecto</button>
                         </div>
                     </div>
                 </div>
-                 <div class="col">
+                <div class="col">
                     <div class="card h-100 shadow-sm opcion-inicio" data-target="mobilenet">
                         <div class="card-body">
-                             <div class="icon-opcion">
-                                 <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+                            <div class="icon-opcion">
+                                <svg width="37" height="36" viewBox="0 0 37 36" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
-                                        d="M28.9748 13.5009C27.4327 13.5675 25.96 14.1607 24.8023 15.1815C23.6446 16.2023 22.8717 17.5891 22.6125 19.1107C22.3533 20.6322 22.6235 22.1967 23.3779 23.5432C24.1324 24.8898 25.3256 25.937 26.7587 26.5105C26.3506 28.0437 25.4155 29.3842 24.1174 30.2965C22.8193 31.2089 21.2413 31.6348 19.6605 31.4994C17.9514 31.3185 16.3718 30.5049 15.2322 29.2185C14.0925 27.9321 13.4752 26.2659 13.5016 24.5475V20.0479C16.0463 19.5284 18.3328 18.1445 19.9732 16.131C21.6135 14.1175 22.5066 11.5984 22.5009 9.00124V4.50159C22.5009 3.30822 22.0268 2.16371 21.183 1.31987C20.3391 0.476021 19.1946 0.00195313 18.0012 0.00195312H16.8763C16.2796 0.00195312 15.7074 0.238988 15.2855 0.660911C14.8636 1.08283 14.6265 1.65508 14.6265 2.25177C14.6265 2.84846 14.8636 3.42071 15.2855 3.84264C15.7074 4.26456 16.2796 4.50159 16.8763 4.50159H18.0012V8.80438C18.022 10.5078 17.41 12.1583 16.2836 13.4364C15.1573 14.7144 13.5968 15.5291 11.9042 15.7226C10.967 15.8136 10.0211 15.7075 9.12726 15.4111C8.23346 15.1147 7.41158 14.6345 6.71444 14.0015C6.01731 13.3685 5.46035 12.5966 5.07938 11.7354C4.6984 10.8742 4.50184 9.9429 4.50233 9.00124V4.50159H5.62724C6.22393 4.50159 6.79618 4.26456 7.2181 3.84264C7.64002 3.42071 7.87706 2.84846 7.87706 2.25177C7.87706 1.65508 7.64002 1.08283 7.2181 0.660911C6.79618 0.238988 6.22393 0.00195312 5.62724 0.00195312H4.50233C3.30895 0.00195313 2.16445 0.476021 1.3206 1.31987C0.476754 2.16371 0.00268578 3.30822 0.00268578 4.50159V9.00124C0.0021565 11.5945 0.897627 14.1083 2.53754 16.1172C4.17746 18.1261 6.4611 19.5067 9.00197 20.0254V24.48C9.00197 30.712 14.1034 36.0497 20.3467 35.9991C22.9794 35.9744 25.5201 35.0271 27.5263 33.322C29.5325 31.617 30.877 29.2623 31.3258 26.668C32.8792 26.1667 34.1983 25.1196 35.0388 23.7205C35.8794 22.3213 36.1845 20.665 35.8976 19.0582C35.6107 17.4514 34.7512 16.003 33.4784 14.9812C32.2056 13.9595 30.6056 13.4335 28.9748 13.5009ZM29.2504 22.5002C28.8054 22.5002 28.3704 22.3682 28.0004 22.121C27.6304 21.8738 27.3421 21.5224 27.1718 21.1113C27.0015 20.7002 26.957 20.2478 27.0438 19.8114C27.1306 19.375 27.3448 18.9741 27.6595 18.6595C27.9741 18.3448 28.375 18.1306 28.8114 18.0437C29.2479 17.9569 29.7002 18.0015 30.1113 18.1718C30.5224 18.3421 30.8738 18.6304 31.121 19.0004C31.3682 19.3704 31.5002 19.8054 31.5002 20.2503C31.5002 20.847 31.2631 21.4193 30.8412 21.8412C30.4193 22.2631 29.847 22.5002 29.2504 22.5002Z"
-                                        fill="#8dda90" />
+                                        d="M27.0362 2.80303C25.4936 2.77421 23.965 3.09918 22.5676 3.75299C21.1702 4.4068 19.9412 5.37208 18.9749 6.57473C18.0085 5.37208 16.7795 4.4068 15.3821 3.75299C13.9847 3.09918 12.4561 2.77421 10.9135 2.80303C4.98015 2.90436 0.600475 8.21852 1.00016 14.1407C1.193 17.2314 2.24161 20.2077 4.02878 22.7368C6.65977 26.3188 9.95688 29.3598 13.7395 31.6931C15.3053 32.6845 17.1217 33.2079 18.9749 33.2018C20.8281 33.2079 22.6444 32.6845 24.2102 31.6931C27.9925 29.3616 31.2896 26.3226 33.9209 22.7424C35.7084 20.2135 36.757 17.2371 36.9495 14.1463C37.3492 8.22415 32.9696 2.90999 27.0362 2.80303ZM30.2337 20.1303C28.5448 22.5059 25.3811 25.9624 19.808 29.0867C19.5513 29.2349 19.26 29.313 18.9636 29.313C18.6671 29.313 18.3759 29.2349 18.1192 29.0867C12.563 25.9624 9.40487 22.5059 7.71604 20.1303C6.32764 18.1714 5.5447 15.848 5.46428 13.4482C5.35732 10.3464 7.57531 7.54862 10.6659 7.30656C11.4356 7.24787 12.2091 7.34812 12.9385 7.60107C13.6678 7.85403 14.3373 8.25429 14.9054 8.77697C15.4735 9.29965 15.928 9.93359 16.2407 10.6394C16.5534 11.3452 16.7176 12.1077 16.7231 12.8797C16.7171 13.4375 16.9134 13.9787 17.2756 14.403C17.6378 14.8274 18.1415 15.1061 18.6934 15.1877C19.0118 15.2279 19.3352 15.1994 19.6417 15.1044C19.9483 15.0093 20.231 14.8499 20.4709 14.6366C20.7108 14.4234 20.9023 14.1613 21.0327 13.868C21.163 13.5747 21.2291 13.2569 21.2266 12.936C21.2264 12.1434 21.3935 11.3596 21.7171 10.6361C22.0407 9.91256 22.5134 9.2655 23.1043 8.73728C23.6953 8.20905 24.3911 7.81157 25.1463 7.57084C25.9014 7.33011 26.6989 7.25156 27.4865 7.34033C30.4926 7.66684 32.5924 10.4196 32.4742 13.4426C32.3978 15.8431 31.6188 18.1684 30.2337 20.1303Z"
+                                        fill="#5FA8D3" />
                                 </svg>
                             </div>
-                            <h5 class="card-title">  MobileNetV2</h5>
-                            <p class="card-text">Clasificación de imágenes con Transfer Learning.</p>
+                            <h5 class="card-title"> Análisis de Sentimientos - Transfer Learning</h5>
+                            <p class="card-text">>Analiza el sentimiento (positivo, negativo o neutral) de un texto
+                                usando modelos de lenguaje.</p>
                             <button class="opcion-button" data-target="mobilenet">Ver proyecto</button>
                         </div>
                     </div>
@@ -131,14 +147,17 @@
         </section>
         <div class="p-4">
             <section id="nb" class="content-section">
-                <h3>Naive Bayes (Dígitos)</h3>
+                <h3>Detector de cáncer de mamas con Naive Bayes</h3>
+                <p>Sube una imagen médica (por ejemplo, de una célula o tejido) y nuestro sistema te dirá si hay
+                    indicios de cáncer de mama.</p>
                 <form id="form-nb" class="row g-3">
                     <div class="col-6">
                         <label class="form-label">Imagen</label>
                         <input type="file" class="form-control" id="nb_img" accept=".png,.jpg,.jpeg">
+                        <div id="nb_preview" class="mt-2"></div>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Clasificar</button>
+                        <button type="submit" class="btn btn-primary">Detectar cáncer</button>
                     </div>
                 </form>
                 <div id="nb_res"></div>
@@ -221,14 +240,17 @@
             </section>
 
             <section id="mobilenet" class="content-section">
-                <h3>Transfer Learning MobileNetV2</h3>
+                <h3>Detector de Emociones con Transfer Learning MobileNetV2</h3>
+                <p>Sube una imagen de un rostro y nuestro sistema clasificará la emoción detectada usando Transfer
+                    Learning (MobileNetV2).</p>
                 <form id="form-mn" class="row g-3">
                     <div class="col-6">
                         <label class="form-label">Imagen</label>
                         <input type="file" class="form-control" id="mn_img" accept=".png,.jpg,.jpeg">
+                        <div id="mn_preview" class="mt-3"></div>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Clasificar</button>
+                        <button type="submit" class="btn btn-primary">Detectar emocion</button>
                     </div>
                 </form>
                 <div id="mn_res"></div>
@@ -236,17 +258,20 @@
 
             <section id="sentiment" class="content-section">
                 <h3>Análisis de Sentimiento</h3>
+                <p>Escribe un texto para analizar si su tono es positivo, negativo o neutral.</p>
                 <form id="form-sentiment" class="row g-3">
                     <div class="col-12">
-                        <label class="form-label">Texto</label>
-                        <textarea id="sentiment_text" class="form-control" rows="3"></textarea>
+                        <label class="form-label" for="sentiment_text">Texto</label>
+                        <textarea id="sentiment_text" class="form-control sentiment-area" rows="4"
+                            placeholder="Escribe tu mensaje aquí..."></textarea>
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary">Analizar</button>
                     </div>
                 </form>
-                <div id="sentiment_res"></div>
+                <div id="sentiment_res" class="mt-3"></div>
             </section>
+
         </div>
     </div>
 
@@ -263,15 +288,21 @@
         document.getElementById('inicio').style.display = 'block';
 
         // Naive Bayes imagen
-        document.getElementById('form-nb').addEventListener('submit', async e => {
-            e.preventDefault();
-            const inp = document.getElementById('nb_img');
-            if (!inp.files.length) return;
-            const fd = new FormData();
-            fd.append('file', inp.files[0]);
-            const r = await fetch('/api/naive_bayes/image', { method: 'POST', body: fd });
-            const res = await r.json();
-            document.getElementById('nb_res').innerHTML = `<p><strong>Predicción:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+
+        document.getElementById('nb_img').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const previewContainer = document.getElementById('nb_preview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    previewContainer.innerHTML = `
+                <img src="${evt.target.result}" alt="Vista previa" class="img-fluid rounded shadow mt-2" style="max-width: 300px;">
+            `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.innerHTML = '';
+            }
         });
 
         // Mochila
@@ -394,15 +425,56 @@
         });
 
         // MobileNet
+        document.getElementById('mn_img').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const previewContainer = document.getElementById('mn_preview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    previewContainer.innerHTML = `
+          <img src="${evt.target.result}" alt="Vista previa" class="img-fluid rounded shadow mt-2" style="max-width: 300px;">
+        `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.innerHTML = '';
+            }
+        });
+
         document.getElementById('form-mn').addEventListener('submit', async e => {
             e.preventDefault();
             const fileInput = document.getElementById('mn_img');
             if (!fileInput.files.length) return;
+
             const fd = new FormData();
             fd.append('file', fileInput.files[0]);
+
             const r = await fetch('/api/mobilenet', { method: 'POST', body: fd });
             const res = await r.json();
-            document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+
+            const label = res.label.toLowerCase();
+            const prob = (res.probability * 100).toFixed(2);
+
+            const emociones = {
+                happy: { color: "#ffdd57", emoji: "😄", title: "¡Felicidad detectada!" },
+                sad: { color: "#6c757d", emoji: "😢", title: "Tristeza detectada" },
+                angry: { color: "#ff6b6b", emoji: "😡", title: "¡Ira detectada!" },
+                fear: { color: "#6f42c1", emoji: "😱", title: "¡Miedo detectado!" },
+                surprise: { color: "#17a2b8", emoji: "😲", title: "¡Sorpresa!" },
+                disgust: { color: "#20c997", emoji: "🤢", title: "¡Asco detectado!" },
+                neutral: { color: "#adb5bd", emoji: "😐", title: "Neutralidad detectada" }
+            };
+
+            const emocion = emociones[label] || { color: "#007bff", emoji: "🧠", title: "Emoción detectada" };
+
+            document.getElementById('mn_res').innerHTML = `
+        <div class="mt-4 p-4 rounded shadow", ${emocion.color});
+            animation: fadeIn 1s ease-in-out;
+        ">
+            <h5 class="fw-bold" style="color: ${emocion.color};">${emocion.emoji} ${emocion.title}</h5>
+            <p class="mb-1"><strong>Emoción:</strong> ${label.charAt(0).toUpperCase() + label.slice(1)}</p>
+        </div>
+    `;
         });
 
         // Sentiment
