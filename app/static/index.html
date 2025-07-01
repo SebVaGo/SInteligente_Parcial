@@ -21,6 +21,7 @@
                     Mochila</a></li>
             <li class="nav-item"><a href="#" class="nav-link text-white" data-target="backprop">Backpropagation</a></li>
             <li class="nav-item"><a href="#" class="nav-link text-white" data-target="mobilenet">MobileNetV2</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-white" data-target="sentiment">Análisis de Sentimiento</a></li>
             <li class="nav-item"><a href="#" class="nav-link text-white" data-target="clustering">Clustering</a></li>
         </ul>
     </nav>
@@ -232,6 +233,20 @@
                 </form>
                 <div id="mn_res"></div>
             </section>
+
+            <section id="sentiment" class="content-section">
+                <h3>Análisis de Sentimiento</h3>
+                <form id="form-sentiment" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Texto</label>
+                        <textarea id="sentiment_text" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Analizar</button>
+                    </div>
+                </form>
+                <div id="sentiment_res"></div>
+            </section>
         </div>
     </div>
 
@@ -388,6 +403,26 @@
             const r = await fetch('/api/mobilenet', { method: 'POST', body: fd });
             const res = await r.json();
             document.getElementById('mn_res').innerHTML = `<p><strong>Clase:</strong> ${res.label}</p><p><strong>Probabilidad:</strong> ${res.probability.toFixed(3)}</p>`;
+        });
+
+        // Sentiment
+        document.getElementById('form-sentiment').addEventListener('submit', async e => {
+            e.preventDefault();
+            const text = document.getElementById('sentiment_text').value.trim();
+            if (!text) return;
+            const body = { text };
+            const r = await fetch('/api/sentiment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!r.ok) {
+                const text = await r.text();
+                document.getElementById('sentiment_res').innerHTML = `<p class="text-danger">Error: ${text}</p>`;
+                return;
+            }
+            const res = await r.json();
+            document.getElementById('sentiment_res').innerHTML = `<p><strong>Sentimiento:</strong> ${res.sentiment}</p>`;
         });
     </script>
 
