@@ -2,13 +2,12 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional, Dict
 import numpy as np
 import os
 import tempfile
-
-
 import naivebayes
+import cnn_cancer_module as cnn
 import mochila
 import backprop_module as backprop
 
@@ -20,8 +19,6 @@ from sentiment import predict_sentiment, init_sentiment_model
 
 
 app = FastAPI(title="Algoritmos Inteligentes")
-
-# Serve frontend
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.on_event("startup")
@@ -32,27 +29,6 @@ async def startup_event():
 @app.get("/")
 def index():
     return FileResponse("app/static/index.html")
-
-# ---- Naive Bayes ----
-class NBTrainRequest(BaseModel):
-    test_size: float = 0.2
-    random_state: int = 22
-    imputer_strategy: str = "mean"
-
-class NBTrainResponse(BaseModel):
-    accuracy: float
-    features: List[str]
-    logs: List[str]
-
-class NBPredictRequest(BaseModel):
-    values: List[float]
-
-class NBPredictResponse(BaseModel):
-    diagnosis: str
-
-class NBImageResponse(BaseModel):
-    label: int
-    probability: float
 
 class ClusteringSilhouette(BaseModel):
     kmeans: float
@@ -69,77 +45,10 @@ class ClusteringResponse(BaseModel):
     labels: ClusteringLabels
     pca: List[List[float]]
 
-# Modelos Pydantic
-class SentimentRequest(BaseModel):
-    text: str
+class CancerImageResponse(BaseModel):
+    diagnosis: str
+    confidence: float
 
-class SentimentResponse(BaseModel):
-    sentiment: str
-
-
-nb_state = {"model": None, "le": None, "features": None}
-
-@app.post("/api/clustering", response_model=ClusteringResponse)
-async def clustering_endpoint(file: UploadFile = File(...)):
-    # Aceptamos solo CSV
-    if file.content_type != "text/csv":
-        raise HTTPException(status_code=400, detail="Formato de archivo no soportado, se espera un CSV")
-
-    # Guardar temporalmente
-    data = await file.read()
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
-        tmp.write(data)
-        tmp_path = tmp.name
-
-    try:
-        result = run_clustering(tmp_path)
-    finally:
-        os.remove(tmp_path)
-
-    return result
-
-@app.post("/api/naive_bayes/train", response_model=NBTrainResponse)
-def train_nb(req: NBTrainRequest):
-    model, le, feats, acc, logs = naivebayes.entrenar_modelo(
-        test_size=req.test_size,
-        random_state=req.random_state,
-        imputer_strategy=req.imputer_strategy,
-    )
-    nb_state.update({"model": model, "le": le, "features": feats})
-    return NBTrainResponse(accuracy=acc, features=feats, logs=logs)
-
-@app.post("/api/naive_bayes/predict", response_model=NBPredictResponse)
-def predict_nb(req: NBPredictRequest):
-    if nb_state["model"] is None:
-        raise HTTPException(status_code=400, detail="Modelo no entrenado")
-    arr = np.array(req.values).reshape(1, -1)
-    pred = nb_state["model"].predict(arr)[0]
-    diag = nb_state["le"].inverse_transform([pred])[0]
-    return NBPredictResponse(diagnosis=diag)
-
-
-@app.post("/api/naive_bayes/image", response_model=NBImageResponse)
-async def nb_from_image(file: UploadFile = File(...)):
-    if file.content_type not in ("image/png", "image/jpeg"):
-        raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
-    data = await file.read()
-    suffix = os.path.splitext(file.filename)[1] or ".png"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        tmp.write(data)
-        tmp_path = tmp.name
-    try:
-        label, prob = naivebayes.clasificar_imagen(tmp_path)
-    finally:
-        os.remove(tmp_path)
-    return NBImageResponse(label=label, probability=prob)
-
-# Endpoint en main.py
-@app.post("/api/sentiment", response_model=SentimentResponse)
-async def sentiment_endpoint(req: SentimentRequest):
-    resultado = predict_sentiment(req.text)
-    return SentimentResponse(sentiment=resultado)
-
-# ---- Mochila ----
 class Objeto(BaseModel):
     nombre: str
     peso: float
@@ -155,14 +64,66 @@ class MochilaResponse(BaseModel):
     valor: float
     historia: List[int]
 
+class SentimentRequest(BaseModel):
+    text: str
+
+class SentimentResponse(BaseModel):
+    sentiment: str
+
+nb_state = {"model": None, "le": None, "features": None}
+
+@app.post("/api/clustering", response_model=ClusteringResponse)
+async def clustering_endpoint(file: UploadFile = File(...)):
+    if file.content_type != "text/csv":
+        raise HTTPException(status_code=400, detail="Formato de archivo no soportado, se espera un CSV")
+    data = await file.read()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp:
+        tmp.write(data)
+        tmp_path = tmp.name
+
+    try:
+        result = run_clustering(tmp_path)
+    finally:
+        os.remove(tmp_path)
+
+    return result
+
+class CancerImageResponse(BaseModel):
+    diagnosis: str
+    confidence: float
+
+
+@app.post("/api/cancer-image", response_model=CancerImageResponse)
+async def cancer_image_endpoint(file: UploadFile = File(...)):
+    # Validación de formato
+    if file.content_type not in ("image/png", "image/jpeg"):
+        raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
+
+    # Guardar temporalmente la imagen
+    data = await file.read()
+    suffix = os.path.splitext(file.filename)[1] or ".png"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(data)
+        tmp_path = tmp.name
+
+    try:
+        # Clasificar con el modelo actualizado
+        label, confidence = cnn.classify_cancer_image(tmp_path)
+        return CancerImageResponse(diagnosis=label, confidence=confidence)
+    finally:
+        os.remove(tmp_path)
+
+@app.post("/api/sentiment", response_model=SentimentResponse)
+async def sentiment_endpoint(req: SentimentRequest):
+    resultado = predict_sentiment(req.text)
+    return SentimentResponse(sentiment=resultado)
+
 @app.post("/api/mochila", response_model=MochilaResponse)
 def ejecutar_mochila(req: MochilaRequest):
     mochila.objetos = [o.dict() for o in req.objetos]
     mochila.CAPACIDAD_MAXIMA = req.capacidad
     sel, peso, val, hist = mochila.ejecutar_genetico()
     return MochilaResponse(seleccion=sel, peso=peso, valor=val, historia=hist)
-
-# ---- Backpropagation ----
 class BackpropRequest(BaseModel):
     inputs: List[List[float]]
     outputs: List[List[float]]
@@ -182,8 +143,6 @@ def ejecutar_backprop(req: BackpropRequest):
         hidden_neurons=2,
     )
     return BackpropResponse(result=np.round(out, 4).tolist())
-
-# ---- MobileNetV2 ----
 
 class MobileNetResponse(BaseModel):
     label: str

@@ -26,8 +26,6 @@ def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate, *, save_path
     if not os.path.isdir(work_dir):
         with zipfile.ZipFile(path_zip, 'r') as z:
             z.extractall(work_dir)
-
-    # Preparar datasets
     train_ds = tf.keras.preprocessing.image_dataset_from_directory(
         work_dir,
         validation_split=0.2,
@@ -44,39 +42,25 @@ def ejecutar_mobilenet(path_zip, epochs, batch_size, learning_rate, *, save_path
         image_size=(224, 224),
         batch_size=batch_size
     )
-
-    # Obtener número de clases
     num_classes = len(train_ds.class_names)
-
-    # Prefetch
     AUTOTUNE = tf.data.AUTOTUNE
     train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)
     val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
-
-    # Cargar MobileNetV2 base
     base_model = MobileNetV2(include_top=False, input_shape=(224, 224, 3), weights='imagenet')
     base_model.trainable = False
-
-    # Cabeza personalizada
     inputs = layers.Input(shape=(224, 224, 3))
     x = base_model(inputs, training=False)
     x = layers.GlobalAveragePooling2D()(x)
     x = layers.Dropout(0.2)(x)
     outputs = layers.Dense(num_classes, activation='softmax')(x)
     model = models.Model(inputs, outputs)
-
-    # Compilar
     opt = optimizers.Adam(learning_rate=learning_rate)
     model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-
-    # Entrenar
     history = model.fit(
         train_ds,
         validation_data=val_ds,
         epochs=epochs
     )
-
-    # Evaluar
     eval_loss, eval_acc = model.evaluate(val_ds)
     eval_metrics = {'loss': eval_loss, 'accuracy': eval_acc}
 

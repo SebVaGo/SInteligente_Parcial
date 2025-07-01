@@ -1,90 +1,39 @@
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn.datasets import load_digits
+import numpy as np
 from PIL import Image
+import torch
+from transformers import AutoImageProcessor, AutoModelForImageClassification
 
-def entrenar_modelo(
-    url: str = 'https://github.com/YBIFoundation/Dataset/raw/main/Cancer.csv',
-    test_size: float = 0.2,
-    random_state: int = 22,
-    imputer_strategy: str = 'mean'
-):
-    logs = []
-    cancer = pd.read_csv(url)
-    logs.append(f"Cargado CSV con {cancer.shape[0]} filas y {cancer.shape[1]} columnas")
+# Identificador del modelo Skin Cancer MobileNetV1 en Hugging Face
+_HF_MODEL_ID = "nateraw/skin-cancer-mobilenet-v1"
 
-    # Codificar diagnóstico
-    le = LabelEncoder()
-    cancer['diagnosis'] = le.fit_transform(cancer['diagnosis'])
-    logs.append(f"Codificado diagnóstico: {sorted(le.classes_)} → {[0,1]}")
-
-    # Selección de features, eliminando columnas sin nombre útiles
-    X = cancer.drop(columns=['id','diagnosis'])
-    # Eliminamos cualquier columna 'Unnamed' que esté vacía
-    unnamed = [c for c in X.columns if c.startswith('Unnamed')]
-    if unnamed:
-        X = X.drop(columns=unnamed)
-        logs.append(f"Eliminadas columnas vacías: {unnamed}")
-
-    y = cancer['diagnosis']
-    logs.append(f"Features seleccionados: {len(X.columns)} columnas")
-
-    # Imputación
-    imputer = SimpleImputer(strategy=imputer_strategy)
-    X_imp = imputer.fit_transform(X)
-    logs.append(f"Imputación ({imputer_strategy}) completa; nueva forma: {X_imp.shape}")
-
-    # Reconstruir DataFrame con los nombres correctos
-    X = pd.DataFrame(X_imp, columns=X.columns)
-
-    # Split
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-    logs.append(f"Split train/test: test_size={test_size}, random_state={random_state}")
-    logs.append(f"  → Train: {X_train.shape}, Test: {X_test.shape}")
-
-    # Entrenamiento
-    model = GaussianNB()
-    model.fit(X_train, y_train)
-    logs.append("Modelo GaussianNB entrenado")
-
-    # Precisión
-    accuracy = model.score(X_test, y_test)
-    logs.append(f"Precisión sobre test: {accuracy:.4f}")
-
-    return model, le, X.columns.tolist(), accuracy, logs
+# Variables globales para carga perezosa\ n_hf_processor = None
+_hf_model = None
 
 
-# --- Clasificación de imágenes ----
-_digits_model = None
+def classify_cancer_image(path: str):
+    """
+    Carga el modelo (si no está inicializado), procesa la imagen y devuelve
+    la etiqueta ('BENIGN' o 'MALIGNANT') y la confianza.
+    """
+    global _hf_processor, _hf_model
+    # Inicializar modelo y procesador si es la primera llamada
+    if _hf_processor is None or _hf_model is None:
+        _hf_processor = AutoImageProcessor.from_pretrained(_HF_MODEL_ID)
+        _hf_model     = AutoModelForImageClassification.from_pretrained(_HF_MODEL_ID)
+        _hf_model.eval()
 
+    # Abrir y preparar imagen
+    img = Image.open(path).convert("RGB")
+    inputs = _hf_processor(images=img, return_tensors="pt")
 
-def _load_digits_model():
-    """Entrena un clasificador de dígitos con GaussianNB si no existe."""
-    global _digits_model
-    if _digits_model is None:
-        digits = load_digits()
-        X_train, X_test, y_train, y_test = train_test_split(
-            digits.data, digits.target, test_size=0.2, random_state=42
-        )
-        model = GaussianNB()
-        model.fit(X_train, y_train)
-        _digits_model = model
-    return _digits_model
+    # Inferencia
+    with torch.no_grad():
+        outputs = _hf_model(**inputs)
+    logits = outputs.logits
 
+    probs = torch.softmax(logits, dim=-1)[0].cpu().numpy()
+    idx = int(np.argmax(probs))
+    label = _hf_model.config.id2label[idx]
+    confidence = float(probs[idx])
 
-def clasificar_imagen(path):
-    """Clasifica una imagen de un dígito (png/jpg)."""
-    model = _load_digits_model()
-    img = Image.open(path).convert("L").resize((8, 8))
-    arr = np.array(img, dtype=float)
-    arr = 16 * arr / 255.0
-    arr = arr.reshape(1, -1)
-    probs = model.predict_proba(arr)[0]
-    label = int(probs.argmax())
-    prob = float(probs.max())
-    return label, prob
+    return label, confidence

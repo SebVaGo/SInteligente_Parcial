@@ -305,6 +305,28 @@
             }
         });
 
+        // Procesar imagen y enviar a servidor
+            document.getElementById('form-nb').addEventListener('submit', async e => {
+            e.preventDefault();
+            const input = document.getElementById('nb_img');
+            if (!input.files.length) return;
+
+            const fd = new FormData();
+            fd.append('file', input.files[0]);
+
+            const res = await fetch('/api/cancer-image', { method: 'POST', body: fd });
+            if (!res.ok) return document.getElementById('nb_res').innerHTML =
+                `<p class="text-danger">Error: ${await res.text()}</p>`;
+
+            const { diagnosis, confidence } = await res.json();
+            document.getElementById('nb_res').innerHTML = `
+                <div class="mt-4 p-3 rounded shadow">
+                    <h5>Diagnóstico: <strong>${diagnosis}</strong></h5>
+                    <p>Confianza: ${(confidence * 100).toFixed(2)}%</p>
+                </div>
+            `;
+        });
+
         // Mochila
         const moObjs = [
             { nombre: 'A', peso: 2, valor: 3 },
@@ -476,6 +498,8 @@
         </div>
     `;
         });
+
+        
 
         // Sentiment
         document.getElementById('form-sentiment').addEventListener('submit', async e => {
