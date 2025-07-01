@@ -12,10 +12,7 @@ import naivebayes
 import mochila
 import backprop_module as backprop
 
-try:
-    import mobilenet
-except Exception:  
-    mobilenet = None
+from mobilenet_module import classify_image
 
 from clustering import run_clustering
 from sentiment import predict_sentiment, init_sentiment_model
@@ -195,17 +192,15 @@ class MobileNetResponse(BaseModel):
 
 @app.post("/api/mobilenet", response_model=MobileNetResponse)
 async def ejecutar_mobilenet_api(file: UploadFile = File(...)):
-    if mobilenet is None:
-        raise HTTPException(status_code=500, detail="TensorFlow no disponible")
     if file.content_type not in ("image/png", "image/jpeg"):
-        raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
+        raise HTTPException(400, "Formato de imagen no soportado")
     data = await file.read()
     suffix = os.path.splitext(file.filename)[1] or ".png"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(data)
         tmp_path = tmp.name
     try:
-        label, prob = mobilenet.clasificar_imagen(tmp_path)
+        label, prob = classify_image(tmp_path)
     finally:
         os.remove(tmp_path)
     return MobileNetResponse(label=label, probability=prob)

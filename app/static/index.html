@@ -416,6 +416,12 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
+            if (!r.ok) {
+                const text = await r.text();
+                document.getElementById('sentiment_res').innerHTML = `<p class="text-danger">Error: ${text}</p>`;
+                return;
+            }
+
             const res = await r.json();
             document.getElementById('sentiment_res').innerHTML = `<p><strong>Sentimiento:</strong> ${res.sentiment}</p>`;
         });
