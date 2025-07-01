@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional, Dict
 import numpy as np
 import os
 import tempfile
@@ -34,21 +34,37 @@ def index():
     return FileResponse("app/static/index.html")
 
 # ---- Naive Bayes ----
+# ---- Naive Bayes Mejorado ----
 class NBTrainRequest(BaseModel):
     test_size: float = 0.2
     random_state: int = 22
     imputer_strategy: str = "mean"
+    # Nuevos parámetros para el algoritmo mejorado
+    use_feature_selection: bool = True
+    feature_selection_method: str = "mutual_info"  # "mutual_info", "f_classif", "rfe"
+    k_features: int = 15
+    use_scaling: bool = True
+    scaling_method: str = "robust"  # "robust" o "standard"
+    cv_folds: int = 5
 
 class NBTrainResponse(BaseModel):
     accuracy: float
     features: List[str]
     logs: List[str]
+    # Nuevas métricas médicas
+    cv_accuracy: Optional[float] = None
+    sensitivity: Optional[float] = None
+    specificity: Optional[float] = None
+    auc_score: Optional[float] = None
 
 class NBPredictRequest(BaseModel):
     values: List[float]
 
 class NBPredictResponse(BaseModel):
     diagnosis: str
+    # Nuevos campos para predicción mejorada
+    confidence: Optional[float] = None
+    probabilities: Optional[Dict[str, float]] = None
 
 class NBImageResponse(BaseModel):
     label: int
@@ -100,26 +116,101 @@ async def clustering_endpoint(file: UploadFile = File(...)):
 
 @app.post("/api/naive_bayes/train", response_model=NBTrainResponse)
 def train_nb(req: NBTrainRequest):
-    model, le, feats, acc, logs = naivebayes.entrenar_modelo(
-        test_size=req.test_size,
-        random_state=req.random_state,
-        imputer_strategy=req.imputer_strategy,
-    )
-    nb_state.update({"model": model, "le": le, "features": feats})
-    return NBTrainResponse(accuracy=acc, features=feats, logs=logs)
+    """Entrenar modelo de detección de cáncer con algoritmo mejorado."""
+    try:
+        # Llamar al algoritmo mejorado
+        result = naivebayes.entrenar_modelo(
+            test_size=req.test_size,
+            random_state=req.random_state,
+            imputer_strategy=req.imputer_strategy,
+            use_feature_selection=req.use_feature_selection,
+            feature_selection_method=req.feature_selection_method,
+            k_features=req.k_features,
+            use_scaling=req.use_scaling,
+            scaling_method=req.scaling_method,
+            cv_folds=req.cv_folds
+        )
+        
+        if len(result) == 6:
+            # Nuevo formato con pipeline_objects
+            model, le, feats, acc, logs, pipeline_objects = result
+            nb_state.update({
+                "model": model, 
+                "le": le, 
+                "features": feats,
+                "pipeline_objects": pipeline_objects
+            })
+            
+            # Extraer métricas adicionales de los logs
+            cv_accuracy = None
+            sensitivity = None
+            specificity = None
+            auc_score = None
+            
+            for log in logs:
+                if "Validación cruzada:" in log:
+                    cv_accuracy = float(log.split(":")[1].split("±")[0].strip())
+                elif "Sensibilidad" in log:
+                    sensitivity = float(log.split(":")[1].strip())
+                elif "Especificidad" in log:
+                    specificity = float(log.split(":")[1].strip())
+                elif "AUC-ROC:" in log:
+                    try:
+                        auc_score = float(log.split(":")[1].strip())
+                    except:
+                        auc_score = None
+            
+            return NBTrainResponse(
+                accuracy=acc, 
+                features=feats, 
+                logs=logs,
+                cv_accuracy=cv_accuracy,
+                sensitivity=sensitivity,
+                specificity=specificity,
+                auc_score=auc_score
+            )
+        else:
+            # Formato anterior (compatibilidad)
+            model, le, feats, acc, logs = result
+            nb_state.update({"model": model, "le": le, "features": feats, "pipeline_objects": None})
+            return NBTrainResponse(accuracy=acc, features=feats, logs=logs)
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en entrenamiento: {str(e)}")
 
 @app.post("/api/naive_bayes/predict", response_model=NBPredictResponse)
 def predict_nb(req: NBPredictRequest):
+    """Predicción mejorada usando el pipeline completo."""
     if nb_state["model"] is None:
         raise HTTPException(status_code=400, detail="Modelo no entrenado")
-    arr = np.array(req.values).reshape(1, -1)
-    pred = nb_state["model"].predict(arr)[0]
-    diag = nb_state["le"].inverse_transform([pred])[0]
-    return NBPredictResponse(diagnosis=diag)
-
+    
+    try:
+        # Si tenemos pipeline_objects, usar predicción mejorada
+        if nb_state["pipeline_objects"] is not None:
+            result = naivebayes.predecir_con_pipeline(
+                nb_state["model"],
+                nb_state["le"],
+                nb_state["pipeline_objects"],
+                req.values
+            )
+            return NBPredictResponse(
+                diagnosis=result["diagnosis"],
+                confidence=result["confidence"],
+                probabilities=result["probabilities"]
+            )
+        else:
+            # Predicción tradicional (compatibilidad)
+            arr = np.array(req.values).reshape(1, -1)
+            pred = nb_state["model"].predict(arr)[0]
+            diag = nb_state["le"].inverse_transform([pred])[0]
+            return NBPredictResponse(diagnosis=diag)
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en predicción: {str(e)}")
 
 @app.post("/api/naive_bayes/image", response_model=NBImageResponse)
 async def nb_from_image(file: UploadFile = File(...)):
+    """Clasificación de imágenes de dígitos (mantenido sin cambios)."""
     if file.content_type not in ("image/png", "image/jpeg"):
         raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
     data = await file.read()
