@@ -7,6 +7,7 @@ import numpy as np
 import os
 import tempfile
 import naivebayes
+import cnn_cancer_module as cnn
 import mochila
 import backprop_module as backprop
 
@@ -69,18 +70,6 @@ class SentimentRequest(BaseModel):
 class SentimentResponse(BaseModel):
     sentiment: str
 
-class MobileNetResponse(BaseModel):
-    label: str
-    probability: float
-
-class BackpropRequest(BaseModel):
-    inputs: List[List[float]]
-    outputs: List[List[float]]
-
-class BackpropResponse(BaseModel):
-    result: List[List[float]]
-
-
 nb_state = {"model": None, "le": None, "features": None}
 
 @app.post("/api/clustering", response_model=ClusteringResponse)
@@ -99,12 +88,18 @@ async def clustering_endpoint(file: UploadFile = File(...)):
 
     return result
 
+class CancerImageResponse(BaseModel):
+    diagnosis: str
+    confidence: float
+
+
 @app.post("/api/cancer-image", response_model=CancerImageResponse)
 async def cancer_image_endpoint(file: UploadFile = File(...)):
-
+    # Validación de formato
     if file.content_type not in ("image/png", "image/jpeg"):
         raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
 
+    # Guardar temporalmente la imagen
     data = await file.read()
     suffix = os.path.splitext(file.filename)[1] or ".png"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
@@ -112,7 +107,8 @@ async def cancer_image_endpoint(file: UploadFile = File(...)):
         tmp_path = tmp.name
 
     try:
-        label, confidence = naivebayes.classify_cancer_image(tmp_path)
+        # Clasificar con el modelo actualizado
+        label, confidence = cnn.classify_cancer_image(tmp_path)
         return CancerImageResponse(diagnosis=label, confidence=confidence)
     finally:
         os.remove(tmp_path)
@@ -128,6 +124,12 @@ def ejecutar_mochila(req: MochilaRequest):
     mochila.CAPACIDAD_MAXIMA = req.capacidad
     sel, peso, val, hist = mochila.ejecutar_genetico()
     return MochilaResponse(seleccion=sel, peso=peso, valor=val, historia=hist)
+class BackpropRequest(BaseModel):
+    inputs: List[List[float]]
+    outputs: List[List[float]]
+
+class BackpropResponse(BaseModel):
+    result: List[List[float]]
 
 @app.post("/api/backprop", response_model=BackpropResponse)
 def ejecutar_backprop(req: BackpropRequest):
@@ -141,6 +143,10 @@ def ejecutar_backprop(req: BackpropRequest):
         hidden_neurons=2,
     )
     return BackpropResponse(result=np.round(out, 4).tolist())
+
+class MobileNetResponse(BaseModel):
+    label: str
+    probability: float
 
 
 @app.post("/api/mobilenet", response_model=MobileNetResponse)

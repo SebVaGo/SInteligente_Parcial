@@ -1,56 +1,39 @@
-import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder, StandardScaler, RobustScaler
-from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
-from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif, RFE
 from PIL import Image
-import warnings
-
-# Librerías para Hugging Face
 import torch
-from transformers import AutoModelForImageClassification, AutoImageProcessor
+from transformers import AutoImageProcessor, AutoModelForImageClassification
 
-warnings.filterwarnings('ignore')
+# Identificador del modelo Skin Cancer MobileNetV1 en Hugging Face
+_HF_MODEL_ID = "nateraw/skin-cancer-mobilenet-v1"
 
-# --- Pipeline tabular existente ---
-# (Aquí va todo el código original de entrenar_modelo, predecir_con_pipeline,
-#  _load_digits_model y clasificar_imagen para dígitos.)
-
-# --- Modelo de mamografías (Hugging Face) ---
-
-_HF_MODEL_ID = "maiurilorenzo/CBIS-DDSM-CNN"
+# Variables globales para carga perezosa\ n_hf_processor = None
 _hf_model = None
-_hf_extractor = None
-
-
-def init_hf_cancer_model():
-    """
-    Inicializa el feature extractor y el modelo de Hugging Face para mamografías.
-    Se llama de forma perezosa en la primera clasificación.
-    """
-    global _hf_model, _hf_extractor
-    if _hf_model is None:
-        _hf_extractor = AutoImageProcessor.from_pretrained(_HF_MODEL_ID)
-        _hf_model = AutoModelForImageClassification.from_pretrained(_HF_MODEL_ID)
-        _hf_model.eval()
 
 
 def classify_cancer_image(path: str):
     """
-    Clasifica una imagen de mamografía en 'Benigno' o 'Maligno'.
-    Devuelve label (str) y confidence (float).
+    Carga el modelo (si no está inicializado), procesa la imagen y devuelve
+    la etiqueta ('BENIGN' o 'MALIGNANT') y la confianza.
     """
-    init_hf_cancer_model()
-    img = Image.open(path).convert("RGB")
-    inputs = _hf_extractor(images=img, return_tensors="pt")
-    with torch.no_grad():
-        logits = _hf_model(**inputs).logits[0]
-        probs = torch.softmax(logits, dim=-1).cpu().numpy()
+    global _hf_processor, _hf_model
+    # Inicializar modelo y procesador si es la primera llamada
+    if _hf_processor is None or _hf_model is None:
+        _hf_processor = AutoImageProcessor.from_pretrained(_HF_MODEL_ID)
+        _hf_model     = AutoModelForImageClassification.from_pretrained(_HF_MODEL_ID)
+        _hf_model.eval()
 
+    # Abrir y preparar imagen
+    img = Image.open(path).convert("RGB")
+    inputs = _hf_processor(images=img, return_tensors="pt")
+
+    # Inferencia
+    with torch.no_grad():
+        outputs = _hf_model(**inputs)
+    logits = outputs.logits
+
+    probs = torch.softmax(logits, dim=-1)[0].cpu().numpy()
     idx = int(np.argmax(probs))
     label = _hf_model.config.id2label[idx]
     confidence = float(probs[idx])
+
     return label, confidence

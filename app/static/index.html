@@ -305,31 +305,24 @@
             }
         });
 
-        // Enviar imagen al endpoint de Naive Bayes
-        document.getElementById('form-nb').addEventListener('submit', async e => {
+        // Procesar imagen y enviar a servidor
+            document.getElementById('form-nb').addEventListener('submit', async e => {
             e.preventDefault();
-            const fileInput = document.getElementById('nb_img');
-            if (!fileInput.files.length) return;
+            const input = document.getElementById('nb_img');
+            if (!input.files.length) return;
 
             const fd = new FormData();
-            fd.append('file', fileInput.files[0]);
+            fd.append('file', input.files[0]);
 
-            // Asegúrate de usar la ruta correcta para NB-imagen
-            const r = await fetch('/api/cancer-image', {
-                method: 'POST',
-                body: fd
-            });
-            if (!r.ok) {
-                const err = await r.text();
-                document.getElementById('nb_res').innerHTML = `<p class="text-danger">Error: ${err}</p>`;
-                return;
-            }
-            const res = await r.json();
-            // La respuesta es { label: número, probability: float }
+            const res = await fetch('/api/cancer-image', { method: 'POST', body: fd });
+            if (!res.ok) return document.getElementById('nb_res').innerHTML =
+                `<p class="text-danger">Error: ${await res.text()}</p>`;
+
+            const { diagnosis, confidence } = await res.json();
             document.getElementById('nb_res').innerHTML = `
                 <div class="mt-4 p-3 rounded shadow">
-                    <h5>Clasificación dígito: <strong>${res.label}</strong></h5>
-                    <p>Probabilidad: ${(res.probability * 100).toFixed(2)}%</p>
+                    <h5>Diagnóstico: <strong>${diagnosis}</strong></h5>
+                    <p>Confianza: ${(confidence * 100).toFixed(2)}%</p>
                 </div>
             `;
         });
