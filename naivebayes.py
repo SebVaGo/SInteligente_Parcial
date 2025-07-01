@@ -1,12 +1,10 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import load_digits
-from sklearn.pipeline import Pipeline
 from PIL import Image
-import numpy as np
 
 def entrenar_modelo(
     url: str = 'https://github.com/YBIFoundation/Dataset/raw/main/Cancer.csv',
@@ -15,8 +13,7 @@ def entrenar_modelo(
     imputer_strategy: str = 'mean'
 ):
     logs = []
-    # Algunos datasets públicos pueden no estar en UTF-8
-    cancer = pd.read_csv(url, encoding="latin1")
+    cancer = pd.read_csv(url)
     logs.append(f"Cargado CSV con {cancer.shape[0]} filas y {cancer.shape[1]} columnas")
 
     # Codificar diagnóstico
@@ -50,13 +47,10 @@ def entrenar_modelo(
     logs.append(f"Split train/test: test_size={test_size}, random_state={random_state}")
     logs.append(f"  → Train: {X_train.shape}, Test: {X_test.shape}")
 
-    # Entrenamiento con escalado de features
-    model = Pipeline([
-        ("scaler", StandardScaler()),
-        ("nb", GaussianNB()),
-    ])
+    # Entrenamiento
+    model = GaussianNB()
     model.fit(X_train, y_train)
-    logs.append("Modelo GaussianNB entrenado con escalado")
+    logs.append("Modelo GaussianNB entrenado")
 
     # Precisión
     accuracy = model.score(X_test, y_test)
@@ -77,10 +71,7 @@ def _load_digits_model():
         X_train, X_test, y_train, y_test = train_test_split(
             digits.data, digits.target, test_size=0.2, random_state=42
         )
-        model = Pipeline([
-            ("scaler", StandardScaler()),
-            ("nb", GaussianNB()),
-        ])
+        model = GaussianNB()
         model.fit(X_train, y_train)
         _digits_model = model
     return _digits_model
