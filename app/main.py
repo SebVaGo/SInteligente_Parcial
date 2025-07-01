@@ -6,8 +6,6 @@ from typing import List, Optional, Dict
 import numpy as np
 import os
 import tempfile
-
-
 import naivebayes
 import mochila
 import backprop_module as backprop
@@ -30,37 +28,6 @@ async def startup_event():
 @app.get("/")
 def index():
     return FileResponse("app/static/index.html")
-class NBTrainRequest(BaseModel):
-    test_size: float = 0.2
-    random_state: int = 22
-    imputer_strategy: str = "mean"
-    use_feature_selection: bool = True
-    feature_selection_method: str = "mutual_info"
-    k_features: int = 15
-    use_scaling: bool = True
-    scaling_method: str = "robust"
-    cv_folds: int = 5
-
-class NBTrainResponse(BaseModel):
-    accuracy: float
-    features: List[str]
-    logs: List[str]
-    cv_accuracy: Optional[float] = None
-    sensitivity: Optional[float] = None
-    specificity: Optional[float] = None
-    auc_score: Optional[float] = None
-
-class NBPredictRequest(BaseModel):
-    values: List[float]
-
-class NBPredictResponse(BaseModel):
-    diagnosis: str
-    confidence: Optional[float] = None
-    probabilities: Optional[Dict[str, float]] = None
-
-class NBImageResponse(BaseModel):
-    label: int
-    probability: float
 
 class ClusteringSilhouette(BaseModel):
     kmeans: float
@@ -76,11 +43,42 @@ class ClusteringResponse(BaseModel):
     silhouette: ClusteringSilhouette
     labels: ClusteringLabels
     pca: List[List[float]]
+
+class CancerImageResponse(BaseModel):
+    diagnosis: str
+    confidence: float
+
+class Objeto(BaseModel):
+    nombre: str
+    peso: float
+    valor: float
+
+class MochilaRequest(BaseModel):
+    capacidad: float
+    objetos: List[Objeto]
+
+class MochilaResponse(BaseModel):
+    seleccion: List[Objeto]
+    peso: float
+    valor: float
+    historia: List[int]
+
 class SentimentRequest(BaseModel):
     text: str
 
 class SentimentResponse(BaseModel):
     sentiment: str
+
+class MobileNetResponse(BaseModel):
+    label: str
+    probability: float
+
+class BackpropRequest(BaseModel):
+    inputs: List[List[float]]
+    outputs: List[List[float]]
+
+class BackpropResponse(BaseModel):
+    result: List[List[float]]
 
 
 nb_state = {"model": None, "le": None, "features": None}
@@ -101,126 +99,28 @@ async def clustering_endpoint(file: UploadFile = File(...)):
 
     return result
 
-@app.post("/api/naive_bayes/train", response_model=NBTrainResponse)
-def train_nb(req: NBTrainRequest):
-    """Entrenar modelo de detección de cáncer con algoritmo mejorado."""
-    try:
-        result = naivebayes.entrenar_modelo(
-            test_size=req.test_size,
-            random_state=req.random_state,
-            imputer_strategy=req.imputer_strategy,
-            use_feature_selection=req.use_feature_selection,
-            feature_selection_method=req.feature_selection_method,
-            k_features=req.k_features,
-            use_scaling=req.use_scaling,
-            scaling_method=req.scaling_method,
-            cv_folds=req.cv_folds
-        )
-        
-        if len(result) == 6:
-            model, le, feats, acc, logs, pipeline_objects = result
-            nb_state.update({
-                "model": model, 
-                "le": le, 
-                "features": feats,
-                "pipeline_objects": pipeline_objects
-            })
-            cv_accuracy = None
-            sensitivity = None
-            specificity = None
-            auc_score = None
-            
-            for log in logs:
-                if "Validación cruzada:" in log:
-                    cv_accuracy = float(log.split(":")[1].split("±")[0].strip())
-                elif "Sensibilidad" in log:
-                    sensitivity = float(log.split(":")[1].strip())
-                elif "Especificidad" in log:
-                    specificity = float(log.split(":")[1].strip())
-                elif "AUC-ROC:" in log:
-                    try:
-                        auc_score = float(log.split(":")[1].strip())
-                    except:
-                        auc_score = None
-            
-            return NBTrainResponse(
-                accuracy=acc, 
-                features=feats, 
-                logs=logs,
-                cv_accuracy=cv_accuracy,
-                sensitivity=sensitivity,
-                specificity=specificity,
-                auc_score=auc_score
-            )
-        else:
-            model, le, feats, acc, logs = result
-            nb_state.update({"model": model, "le": le, "features": feats, "pipeline_objects": None})
-            return NBTrainResponse(accuracy=acc, features=feats, logs=logs)
-            
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error en entrenamiento: {str(e)}")
+@app.post("/api/cancer-image", response_model=CancerImageResponse)
+async def cancer_image_endpoint(file: UploadFile = File(...)):
 
-@app.post("/api/naive_bayes/predict", response_model=NBPredictResponse)
-def predict_nb(req: NBPredictRequest):
-    """Predicción mejorada usando el pipeline completo."""
-    if nb_state["model"] is None:
-        raise HTTPException(status_code=400, detail="Modelo no entrenado")
-    
-    try:
-        if nb_state["pipeline_objects"] is not None:
-            result = naivebayes.predecir_con_pipeline(
-                nb_state["model"],
-                nb_state["le"],
-                nb_state["pipeline_objects"],
-                req.values
-            )
-            return NBPredictResponse(
-                diagnosis=result["diagnosis"],
-                confidence=result["confidence"],
-                probabilities=result["probabilities"]
-            )
-        else:
-            arr = np.array(req.values).reshape(1, -1)
-            pred = nb_state["model"].predict(arr)[0]
-            diag = nb_state["le"].inverse_transform([pred])[0]
-            return NBPredictResponse(diagnosis=diag)
-            
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error en predicción: {str(e)}")
-
-@app.post("/api/naive_bayes/image", response_model=NBImageResponse)
-async def nb_from_image(file: UploadFile = File(...)):
-    """Clasificación de imágenes de dígitos (mantenido sin cambios)."""
     if file.content_type not in ("image/png", "image/jpeg"):
         raise HTTPException(status_code=400, detail="Formato de imagen no soportado")
+
     data = await file.read()
     suffix = os.path.splitext(file.filename)[1] or ".png"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(data)
         tmp_path = tmp.name
+
     try:
-        label, prob = naivebayes.clasificar_imagen(tmp_path)
+        label, confidence = naivebayes.classify_cancer_image(tmp_path)
+        return CancerImageResponse(diagnosis=label, confidence=confidence)
     finally:
         os.remove(tmp_path)
-    return NBImageResponse(label=label, probability=prob)
+
 @app.post("/api/sentiment", response_model=SentimentResponse)
 async def sentiment_endpoint(req: SentimentRequest):
     resultado = predict_sentiment(req.text)
     return SentimentResponse(sentiment=resultado)
-class Objeto(BaseModel):
-    nombre: str
-    peso: float
-    valor: float
-
-class MochilaRequest(BaseModel):
-    capacidad: float
-    objetos: List[Objeto]
-
-class MochilaResponse(BaseModel):
-    seleccion: List[Objeto]
-    peso: float
-    valor: float
-    historia: List[int]
 
 @app.post("/api/mochila", response_model=MochilaResponse)
 def ejecutar_mochila(req: MochilaRequest):
@@ -228,12 +128,6 @@ def ejecutar_mochila(req: MochilaRequest):
     mochila.CAPACIDAD_MAXIMA = req.capacidad
     sel, peso, val, hist = mochila.ejecutar_genetico()
     return MochilaResponse(seleccion=sel, peso=peso, valor=val, historia=hist)
-class BackpropRequest(BaseModel):
-    inputs: List[List[float]]
-    outputs: List[List[float]]
-
-class BackpropResponse(BaseModel):
-    result: List[List[float]]
 
 @app.post("/api/backprop", response_model=BackpropResponse)
 def ejecutar_backprop(req: BackpropRequest):
@@ -247,10 +141,6 @@ def ejecutar_backprop(req: BackpropRequest):
         hidden_neurons=2,
     )
     return BackpropResponse(result=np.round(out, 4).tolist())
-
-class MobileNetResponse(BaseModel):
-    label: str
-    probability: float
 
 
 @app.post("/api/mobilenet", response_model=MobileNetResponse)
