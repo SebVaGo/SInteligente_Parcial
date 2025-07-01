@@ -18,12 +18,19 @@ except Exception:
     mobilenet = None
 
 from clustering import run_clustering
+from sentiment import predict_sentiment, init_sentiment_model
+
 
 
 app = FastAPI(title="Algoritmos Inteligentes")
 
 # Serve frontend
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+@app.on_event("startup")
+async def startup_event():
+    """Pre-carga los modelos necesarios."""
+    init_sentiment_model()
 
 @app.get("/")
 def index():
@@ -64,6 +71,14 @@ class ClusteringResponse(BaseModel):
     silhouette: ClusteringSilhouette
     labels: ClusteringLabels
     pca: List[List[float]]
+
+# Modelos Pydantic
+class SentimentRequest(BaseModel):
+    text: str
+
+class SentimentResponse(BaseModel):
+    sentiment: str
+
 
 nb_state = {"model": None, "le": None, "features": None}
 
@@ -120,6 +135,12 @@ async def nb_from_image(file: UploadFile = File(...)):
     finally:
         os.remove(tmp_path)
     return NBImageResponse(label=label, probability=prob)
+
+# Endpoint en main.py
+@app.post("/api/sentiment", response_model=SentimentResponse)
+async def sentiment_endpoint(req: SentimentRequest):
+    resultado = predict_sentiment(req.text)
+    return SentimentResponse(sentiment=resultado)
 
 # ---- Mochila ----
 class Objeto(BaseModel):
